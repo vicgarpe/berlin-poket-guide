@@ -1,0 +1,25 @@
+---
+layout: base.njk
+---
+<article class="row g-4 align-items-stretch">
+  {% if hero %}
+    <div class="col-12 col-lg-7">
+      <figure class="ratio ratio-16x9 d-block rounded overflow-hidden">
+        <img src="{{ hero }}" class="w-100 h-100" style="object-fit:cover" alt="{{ alt or title }}">
+      </figure>
+    </div>
+  {% endif %}
+  <div class="col-12 col-lg-5 d-flex">
+    <div class="d-flex flex-column">
+      <h2 class="display-6 fw-bold lh-sm">{{ title }}</h2>
+      {% if excerpt %}<p class="text-secondary lead">{{ excerpt }}</p>{% endif %}
+      <div class="mt-auto small text-muted">
+        {{ lugar or "" }}{% if lugar %} — {% endif %}{{ page.date | formatDate('es-ES') }}
+      </div>
+    </div>
+  </div>
+</article>
+
+<div class="mt-4 content">
+  {{ content | safe }}
+</div>

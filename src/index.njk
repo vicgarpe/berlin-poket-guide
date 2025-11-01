@@ -1,0 +1,34 @@
+---
+layout: base.njk
+title: "Guía de Berlín"
+pagination:
+  data: collections.paradas
+  size: 12
+permalink: "/index.html"
+---
+<h1 class="h4 mb-3">Guía de Berlín</h1>
+
+<div class="row g-4">
+  {% for post in pagination.items %}
+    <div class="col-12 col-md-6 col-lg-4">
+      <article class="card h-100 shadow-sm">
+        <a href="{{ post.url | url }}" class="ratio ratio-16x9">
+          {% if post.data.hero %}
+            <img src="{{ post.data.hero }}" class="card-img-top" alt="{{ post.data.alt or post.data.title }}">
+          {% else %}
+            <img src="https://picsum.photos/800/500?{{ loop.index }}" class="card-img-top" alt="Imagen">
+          {% endif %}
+        </a>
+        <div class="card-body">
+          <h3 class="h5 card-title">{{ post.data.title }}</h3>
+          {% if post.data.excerpt %}
+            <p class="card-text text-secondary">{{ post.data.excerpt }}</p>
+          {% endif %}
+        </div>
+        <div class="card-footer bg-white small text-muted">
+          {{ post.data.lugar or 'Parada' }} · {{ post.date | formatDate('es-ES') }}
+        </div>
+      </article>
+    </div>
+  {% endfor %}
+</div>
