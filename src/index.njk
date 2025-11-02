@@ -7,43 +7,48 @@ pagination:
 permalink: "/index.html"
 ---
 <h1 class="h4 mb-3">Guía de Berlín</h1>
-<!-- HERO -->
+
+{# ===== HERO OPCIONAL (puedes borrar todo este bloque si no lo usas) ===== #}
 <section class="mb-4">
   <div class="position-relative rounded overflow-hidden">
     <picture>
-      <source type="image/avif" srcset="/images/berlin-hero-800.avif 800w, /images/berlin-hero-1200.avif 1200w, /images/berlin-hero-1600.avif 1600w">
-      <source type="image/webp" srcset="/images/berlin-hero-800.webp 800w, /images/berlin-hero-1200.webp 1200w, /images/berlin-hero-1600.webp 1600w">
+      {# Si tienes AVIF/WebP, déjalos. Si no, borra estas dos líneas <source> #}
+      <source type="image/avif" srcset="{{ '/images/berlin-hero-800.avif' | url }} 800w, {{ '/images/berlin-hero-1200.avif' | url }} 1200w, {{ '/images/berlin-hero-1600.avif' | url }} 1600w">
+      <source type="image/webp" srcset="{{ '/images/berlin-hero-800.webp' | url }} 800w, {{ '/images/berlin-hero-1200.webp' | url }} 1200w, {{ '/images/berlin-hero-1600.webp' | url }} 1600w">
       <img
-        src="/images/berlin-hero-1200.jpg"
-        srcset="/images/berlin-hero-800.jpg 800w, /images/berlin-hero-1200.jpg 1200w, /images/berlin-hero-1600.jpg 1600w"
+        src="{{ '/images/berlin-hero-1200.jpg' | url }}"
+        srcset="{{ '/images/berlin-hero-800.jpg' | url }} 800w, {{ '/images/berlin-hero-1200.jpg' | url }} 1200w, {{ '/images/berlin-hero-1600.jpg' | url }} 1600w"
         sizes="(max-width: 576px) 100vw, 960px"
         alt="Panorámica de Berlín"
         class="w-100 d-block"
         loading="lazy"
       >
     </picture>
-
-    <!-- Cinta de texto superpuesta -->
     <div class="hero-caption">
       Berlín en 3 días: barrios, rutas y sitios clave sin perder tiempo.
     </div>
   </div>
 </section>
+{# ===== FIN HERO OPCIONAL ===== #}
 
-<!-- 🔹 Intro de la portada -->
+{# ===== INTRO DE PORTADA (tu texto) ===== #}
 <section class="mb-4">
   <p class="lead">
-    Bienvenido/a a nuestra guía práctica de Berlín para bollagas. Aquí podemos poner los enlaces a mapas, fotos y recomendaciones reales para movernos por la ciudad.
+    Bienvenido/a a nuestra guía práctica de Berlín. Itinerario por días con mapas, fotos y recomendaciones.
+  </p>
+  <p>
+    Empieza por <strong>Mitte</strong> y continúa por cada barrio. Cada parada trae tips de transporte, horarios y sitios para comer.
   </p>
 </section>
 
+{# ===== LISTADO DE POSTS ===== #}
 <div class="row g-4">
   {% for post in pagination.items %}
     <div class="col-12 col-md-6 col-lg-4">
       <article class="card h-100 shadow-sm">
         <a href="{{ post.url | url }}" class="ratio ratio-16x9">
           {% if post.data.hero %}
-            <img src="{{ post.data.hero }}" class="card-img-top" alt="{{ post.data.alt or post.data.title }}">
+            <img src="{{ post.data.hero | url }}" class="card-img-top" alt="{{ post.data.alt or post.data.title }}">
           {% else %}
             <img src="https://picsum.photos/800/500?{{ loop.index }}" class="card-img-top" alt="Imagen">
           {% endif %}
