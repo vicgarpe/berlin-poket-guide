@@ -2,6 +2,7 @@
     "name": "berlin-poket-guide",
     "version": "1.0.0",
     "private": true,
+    "type": "module",
     "scripts": {
         "build": "eleventy --input=src",
         "serve": "eleventy --serve --watch --input=src",

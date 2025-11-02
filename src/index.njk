@@ -7,6 +7,35 @@ pagination:
 permalink: "/index.html"
 ---
 <h1 class="h4 mb-3">Guía de Berlín</h1>
+<!-- HERO -->
+<section class="mb-4">
+  <div class="position-relative rounded overflow-hidden">
+    <picture>
+      <source type="image/avif" srcset="/images/berlin-hero-800.avif 800w, /images/berlin-hero-1200.avif 1200w, /images/berlin-hero-1600.avif 1600w">
+      <source type="image/webp" srcset="/images/berlin-hero-800.webp 800w, /images/berlin-hero-1200.webp 1200w, /images/berlin-hero-1600.webp 1600w">
+      <img
+        src="/images/berlin-hero-1200.jpg"
+        srcset="/images/berlin-hero-800.jpg 800w, /images/berlin-hero-1200.jpg 1200w, /images/berlin-hero-1600.jpg 1600w"
+        sizes="(max-width: 576px) 100vw, 960px"
+        alt="Panorámica de Berlín"
+        class="w-100 d-block"
+        loading="lazy"
+      >
+    </picture>
+
+    <!-- Cinta de texto superpuesta -->
+    <div class="hero-caption">
+      Berlín en 3 días: barrios, rutas y sitios clave sin perder tiempo.
+    </div>
+  </div>
+</section>
+
+<!-- 🔹 Intro de la portada -->
+<section class="mb-4">
+  <p class="lead">
+    Bienvenido/a a nuestra guía práctica de Berlín para bollagas. Aquí podemos poner los enlaces a mapas, fotos y recomendaciones reales para movernos por la ciudad.
+  </p>
+</section>
 
 <div class="row g-4">
   {% for post in pagination.items %}

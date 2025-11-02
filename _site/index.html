@@ -10,6 +10,15 @@
   <style>
     body { line-height: 1.65; max-width: 1100px; margin: 0 auto; padding: 1rem; }
     .card-img-top { object-fit: cover; }
+    /* Hero accesible y legible en móvil */
+    .hero-caption{
+        position:absolute; left:0; bottom:0;
+        width:100%;
+        padding:.75rem 1rem;
+        color:#fff; font-weight:600;
+        background:linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 60%, rgba(0,0,0,.75) 100%);
+        text-shadow: 0 1px 2px rgba(0,0,0,.6);
+    }
   </style>
 </head>
 <body>
@@ -21,43 +30,110 @@
 
   <main>
     <h1 class="h4 mb-3">Guía de Berlín</h1>
+<!-- HERO -->
+<section class="mb-4">
+  <div class="position-relative rounded overflow-hidden">
+    <picture>
+      <source type="image/avif" srcset="/images/berlin-hero-800.avif 800w, /images/berlin-hero-1200.avif 1200w, /images/berlin-hero-1600.avif 1600w">
+      <source type="image/webp" srcset="/images/berlin-hero-800.webp 800w, /images/berlin-hero-1200.webp 1200w, /images/berlin-hero-1600.webp 1600w">
+      <img
+        src="/images/berlin-hero-1200.jpg"
+        srcset="/images/berlin-hero-800.jpg 800w, /images/berlin-hero-1200.jpg 1200w, /images/berlin-hero-1600.jpg 1600w"
+        sizes="(max-width: 576px) 100vw, 960px"
+        alt="Panorámica de Berlín"
+        class="w-100 d-block"
+        loading="lazy"
+      >
+    </picture>
+
+    <!-- Cinta de texto superpuesta -->
+    <div class="hero-caption">
+      Berlín en 3 días: barrios, rutas y sitios clave sin perder tiempo.
+    </div>
+  </div>
+</section>
+
+<!-- 🔹 Intro de la portada -->
+<section class="mb-4">
+  <p class="lead">
+    Bienvenido/a a nuestra guía práctica de Berlín para bollagas. Aquí podemos poner los enlaces a mapas, fotos y recomendaciones reales para movernos por la ciudad.
+  </p>
+</section>
 
 <div class="row g-4">
   
     <div class="col-12 col-md-6 col-lg-4">
       <article class="card h-100 shadow-sm">
-        <a href="/posts/2025-11-01-dia-1/" class="ratio ratio-16x9">
+        <a href="/posts/2026-03-18-llegada/" class="ratio ratio-16x9">
           
-            <img src="/images/lisboa.jpg" class="card-img-top" alt="Vista de Lisboa al atardecer">
+            <img src="/images/0-alexanderplatz-berlin_0.jpg" class="card-img-top" alt="Vista de Alexanderplatz con la Fernsehturm al fondo">
           
         </a>
         <div class="card-body">
-          <h3 class="h5 card-title">Día 1 — Llegada a Lisboa</h3>
+          <h3 class="h5 card-title">Día 0 — Llegada a Alexanderplatz (check-in)</h3>
           
-            <p class="card-text text-secondary">Paseo por la Baixa, pastéis y miradores al atardecer.</p>
+            <p class="card-text text-secondary">Instalarse en el hotel y tomar el pulso a la zona de Alexanderplatz.</p>
           
         </div>
         <div class="card-footer bg-white small text-muted">
-          Lisboa, Portugal · 01 nov 2025
+          Berlín · 18 mar 2026
         </div>
       </article>
     </div>
   
     <div class="col-12 col-md-6 col-lg-4">
       <article class="card h-100 shadow-sm">
-        <a href="/posts/2025-11-02-dia-1/" class="ratio ratio-16x9">
+        <a href="/posts/2026-03-19-muro-monumental/" class="ratio ratio-16x9">
           
-            <img src="https://picsum.photos/1200/800?berlin" class="card-img-top" alt="Vista de Berlín">
+            <img src="/images/1-dia1-berlin-muro-monumental-1200.jpg" class="card-img-top" alt="Fragmento del Muro con mural, Puerta de Brandeburgo y Fernsehturm al fondo">
           
         </a>
         <div class="card-body">
-          <h3 class="h5 card-title">Día 1 — Mitte</h3>
+          <h3 class="h5 card-title">Día 1 — Muro y Berlín Monumental</h3>
           
-            <p class="card-text text-secondary">Museos, Unter den Linden y paseo por la Isla de los Museos.</p>
+            <p class="card-text text-secondary">Recorrido por el Muro (East Side Gallery), el antiguo paso fronterizo de Friedrichstraße y un free tour monumental al atardecer.</p>
           
         </div>
         <div class="card-footer bg-white small text-muted">
-          Berlín · 02 nov 2025
+          Berlín · 19 mar 2026
+        </div>
+      </article>
+    </div>
+  
+    <div class="col-12 col-md-6 col-lg-4">
+      <article class="card h-100 shadow-sm">
+        <a href="/posts/2026-03-20-barrio-judio/" class="ratio ratio-16x9">
+          
+            <img src="/images/2-dia2-barrio-judio-wwii-1200.jpg" class="card-img-top" alt="Collage con Hackescher Markt, Topographie des Terrors y el Memorial a los Judíos">
+          
+        </a>
+        <div class="card-body">
+          <h3 class="h5 card-title">Día 2 — Barrio Judío + Segunda Guerra Mundial</h3>
+          
+            <p class="card-text text-secondary">Mañana por el Barrio Judío (Hackescher Markt y patios) y tarde en Topographie des Terrors, Memorial del Holocausto y panel del Führerbunker.</p>
+          
+        </div>
+        <div class="card-footer bg-white small text-muted">
+          Berlín · 20 mar 2026
+        </div>
+      </article>
+    </div>
+  
+    <div class="col-12 col-md-6 col-lg-4">
+      <article class="card h-100 shadow-sm">
+        <a href="/posts/2026-08-21-muro-memorial/" class="ratio ratio-16x9">
+          
+            <img src="/images/3-dia-3-muro-stasi-1200.jpg" class="card-img-top" alt="Collage con Bernauer Straße y el memorial de Hohenschönhausen">
+          
+        </a>
+        <div class="card-body">
+          <h3 class="h5 card-title">Día 3 — Bernauer Straße + Prisión de la Stasi</h3>
+          
+            <p class="card-text text-secondary">Mañana en el Memorial del Muro y visita guiada a Hohenschönhausen. Tarde libre por Mitte/Spree.</p>
+          
+        </div>
+        <div class="card-footer bg-white small text-muted">
+          Berlín · 21 ago 2026
         </div>
       </article>
     </div>
