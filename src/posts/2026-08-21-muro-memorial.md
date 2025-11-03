@@ -1,52 +1,37 @@
 ---
 layout: post.njk
-title: "Día 3 — Sachsenhausen + tarde libre (opcional Bernauer Straße)"
-excerpt: "Excursión al Memorial y Museo de Sachsenhausen por la mañana. Tarde libre en Berlín u opción breve en Bernauer Straße."
-lugar: "Berlín / Oranienburg"
-hero: "/images/3-dia-3-sachsenhausen-1200.jpg"
-alt: "Collage del memorial de Sachsenhausen y su obelisco"
+title: "Día 3 — Mañana suave + preparar vuelo (BER 06:00, salida 04:00)"
+excerpt: "Paseo ligero por el centro, compras de última hora y regreso temprano al hotel. Preparativos para salida a las 04:00 hacia BER."
+lugar: "Berlín"
+hero: "/images/3-dia-3-relax-1200.jpg"
+alt: "Vista tranquila de la Isla de los Museos y cafés en Mitte"
 templateEngineOverride: njk,md
 ---
 
-## Qué ver
-- **Memorial y Museo de Sachsenhausen (Oranienburg)** — campo de concentración (1936–45) y memorial de posguerra.
-- **Tarde libre** en **Mitte/Spree**.
-- **Opcional (corto):** **Memorial del Muro (Bernauer Straße)** al regreso.
+## Qué ver (plan relajado)
+- **Paseo por Museumsinsel / Nikolaiviertel** (corto, exterior).  
+- **Hackescher Markt** para café/souvenirs.  
+- **Opcional 60–90 min:** Memorial del Muro **(Bernauer Straße)** si os apetece un cierre temático.
 
 ## Reservas necesarias
-- **Sachsenhausen:** **entrada gratuita**. Audioguía opcional en el centro de visitantes.  
-  - Información oficial (horarios, acceso, audioguías): <https://www.sachsenhausen-sbg.de/en/visitor-service/opening-times-prices-and-travel-information>  
-  - Visitas públicas del memorial (cuando las haya): <https://www.sachsenhausen-sbg.de/en/visitor-service/offers-for-individual-visitors/>  
-  - Tours guiados externos (salida desde Berlín, excursión 5–6 h): <https://www.visitberlin.de/en/tickets/sachsenhausen-concentration-camp-guided-walking-tour>
+Ninguna. (Si finalmente entráis a algún museo concreto, consultad aforos/entradas online).
 
 ## En el lugar
 
-### Horario sugerido y traslados
-- **08:45–10:15 · Traslado Alexanderplatz → Oranienburg → Memorial**  
-  - Opción 1: **S1** hasta **Oranienburg** (cambio previo en **Friedrichstraße** si salís de Alex).  
-  - Opción 2: **RE5** a Oranienburg desde **Hauptbahnhof** y luego bus.  
-  - Desde **Oranienburg**: **bus 804** a “**Sachsenhausen, Gedenkstätte**” (≈10 min) o **20–25 min a pie**.
+### Horario sugerido
+- **10:00–12:00 · Paseo suave por el centro** (Museumsinsel, Nikolaiviertel, cafés).  
+- **12:30–14:00 · Comida tranquila** por Mitte / Alexanderplatz.  
+- **Tarde · Packing y descanso** en el hotel. Acostarse pronto.
 
-- **10:30–13:00 · Visita al Memorial y Museo de Sachsenhausen**  
-  Recorrido por el recinto (torre A, barracones conservados, área de ejecución/crematorio) + exposiciones.
+### Cómo llegar (opciones para el aeropuerto BER — salida 04:00)
+- **Taxi / VTC** desde Alexanderplatz → **BER T1–2** **≈ 30–40 min** a esa hora (recomendado por margen y comodidad).  
+- **Transporte público temprano**: **S9**/trenes regionales/FEX suelen empezar muy temprano (≈04:00–04:30).  
+  Verificad el día anterior en **BVG Fahrinfo**/Google Maps la **primera salida** desde **Alexanderplatz → BER**.
 
-- **13:15–14:45 · Regreso a Berlín**  
-  Bus 804 → **Oranienburg** → **S1/RE** a Berlín.
+{% gmap "Flughafen Berlin Brandenburg (BER) Terminal 1-2", "Aeropuerto BER (Maps)" %}
+{% gcoords 52.3667, 13.5033, "BER Terminal 1-2 — GPS aprox." %}
 
-- **15:00–noche · Tarde libre**  
-  Paseo por **Isla de los Museos**, **Nikolaiviertel** o cafés en **Hackescher Markt**.  
-  **Opcional (1–1,5 h):** **Memorial del Muro (Bernauer Straße)** (U8 desde Alex, 8–10 min).
-
-### Dónde comer
-- **Oranienburg**: café rápido junto a la estación antes del bus/andar al memorial.  
-- De vuelta en **Berlín**: zona **Alexanderplatz** o **Hackescher Markt**.
-
-### Cómo llegar (puntos clave)
-{% gmap "Gedenkstätte und Museum Sachsenhausen, Straße der Nationen 22, Oranienburg", "Sachsenhausen Memorial (Maps)" %}
-{% gcoords 52.7611, 13.2417, "Sachsenhausen — GPS aprox." %}
-
-{% gmap "Gedenkstätte Berliner Mauer, Bernauer Str., Berlin", "Memorial del Muro (Maps)" %}
-{% gcoords 52.5350, 13.3897, "Bernauer Straße — GPS" %}
-
-## Un poco de historia
-**Sachsenhausen** fue un campo “modelo” de las SS (1936–45) y, tras la guerra, **campo especial soviético nº 7/1** (1945–50). El memorial actual combina restos originales, reconstrucciones y exposiciones permanentes; el obelisco con **triángulos rojos** recuerda a los presos políticos, en línea con la interpretación memorial de la RDA. 
+## Checklist de viaje
+- **Tarjeta de embarque** descargada/impresa · **Documentación** y **método de pago** a mano.  
+- **Líquidos** en bolsa 1 L · **Powerbank** cargada · **Adaptador** si os hace falta.  
+- **Alarma** 03:30 · **Salida** 04:00 → margen amplio para seguridad.
