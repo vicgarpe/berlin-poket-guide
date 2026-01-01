@@ -17,6 +17,10 @@ permalink: /posts/{{ page.fileSlug }}/
 ## Reservas necesarias
 Ninguna. (Si finalmente entráis a algún museo concreto, consultad aforos/entradas online).
 
+## Vuelo
+Numero de reserba de el vuelo de ida: KBF1QS7
+Reservamos maletas para Maria, Yoly y Teresa.
+
 ## En el lugar
 
 ### Horario sugerido
