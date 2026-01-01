@@ -45,7 +45,15 @@ permalink: "/index.html"
 <div class="row g-4">
   {% for post in pagination.items %}
     <div class="col-12 col-md-6 col-lg-4">
-      <article class="card h-100 shadow-sm">
+      <article class="card h-100 shadow-sm position-relative">
+
+        {# Overlay: hace clicable toda la card #}
+        <a
+          href="{{ post.url | url }}"
+          class="card-link-overlay"
+          aria-label="Abrir {{ post.data.title }}"
+        ></a>
+
         <a href="{{ post.url | url }}" class="ratio ratio-16x9">
           {% if post.data.hero %}
             <img src="{{ post.data.hero | url }}" class="card-img-top" alt="{{ post.data.alt or post.data.title }}">
@@ -53,12 +61,14 @@ permalink: "/index.html"
             <img src="https://picsum.photos/800/500?{{ loop.index }}" class="card-img-top" alt="Imagen">
           {% endif %}
         </a>
+
         <div class="card-body">
           <h3 class="h5 card-title">{{ post.data.title }}</h3>
           {% if post.data.excerpt %}
             <p class="card-text text-secondary">{{ post.data.excerpt }}</p>
           {% endif %}
         </div>
+
         <div class="card-footer bg-white small text-muted">
           {{ post.data.lugar or 'Parada' }} · {{ post.date | formatDate('es-ES') }}
         </div>

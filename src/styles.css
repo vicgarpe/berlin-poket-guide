@@ -1,15 +1,143 @@
-:root { --line: 1.65; }
-body { font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif; line-height: var(--line); }
-.site-title { font-family: "Merriweather", Georgia, "Times New Roman", serif; letter-spacing: .5px; font-weight: 700; }
-.headline { font-family: "Merriweather", Georgia, "Times New Roman", serif; }
-@media (max-width: 576px) {
-    .display-6 { font-size: 1.9rem; }
-    .lead { font-size: 1.05rem; }
+:root{
+  /* Tipos */
+  --font-sans: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-serif: "Merriweather", Georgia, "Times New Roman", serif;
+
+  /* Ritmo y medidas */
+  --line: 1.75;
+  --measure: 72ch;
+
+  /* Colores (editorial, alto contraste) */
+  --bg: #ffffff;
+  --text: #111111;
+  --muted: #666666;
+  --border: #e6e6e6;
+  --accent: #b00020; /* rojo “editorial” (no exacto de El País) */
 }
-.object-fit-cover { object-fit: cover; }
-.no-scrollbar { scrollbar-width: none; }
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.card-title { line-height: 1.25; }
-.card-text { line-height: 1.6; }
-.content p { margin-bottom: 1rem; }
-.content img { max-width: 100%; height: auto; border-radius: .5rem; }
+
+body{
+  font-family: var(--font-sans);
+  line-height: var(--line);
+  color: var(--text);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Enlaces: sobrios, subrayado fino */
+a{
+  color: inherit;
+  text-decoration-color: rgba(17,17,17,.35);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.14em;
+}
+a:hover{
+  color: var(--accent);
+  text-decoration-color: rgba(176,0,32,.55);
+}
+
+/* Titulares “de periódico” */
+.site-title,
+.headline,
+h1, h2, h3,
+.card-title{
+  font-family: var(--font-serif);
+  font-weight: 700;
+  letter-spacing: .2px;
+}
+h1{ line-height: 1.15; }
+h2, h3{ line-height: 1.2; }
+
+@media (max-width: 576px){
+  .display-6{ font-size: 1.9rem; }
+  .lead{ font-size: 1.05rem; }
+}
+
+/* Utilidades que ya tenías */
+.object-fit-cover{ object-fit: cover; }
+.no-scrollbar{ scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar{ display: none; }
+
+/* Texto y contenido de posts */
+.content{
+  max-width: var(--measure);
+  margin-left: auto;
+  margin-right: auto;
+}
+.content p{ margin-bottom: 1rem; }
+.content img{
+  max-width: 100%;
+  height: auto;
+  border-radius: .35rem; /* menos redondeo, más “prensa” */
+}
+
+/* Cards: menos “app”, más “periódico”: líneas finas, sin sombras */
+.card{
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.card.shadow-sm{
+  box-shadow: none !important;
+}
+.card.h-100{
+  border-bottom: 1px solid var(--border);
+  padding-bottom: .75rem;
+}
+.card-img-top{
+  border-radius: 0;
+}
+.card-body{
+  padding: .75rem 0 0;
+}
+.card-title{
+  margin-bottom: .35rem;
+  line-height: 1.2;
+}
+.card-text{
+  line-height: 1.65;
+  color: var(--muted) !important;
+}
+.card-footer{
+  border-top: 0;
+  padding: .5rem 0 0;
+  background: transparent !important;
+  color: var(--muted) !important;
+  font-size: .85rem;
+  letter-spacing: .2px;
+}
+
+/* Hero caption: sobrio con línea y fondo claro */
+.hero-caption{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: .75rem 1rem;
+  background: rgba(255,255,255,.92);
+  border-top: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--font-serif);
+  font-weight: 700;
+}
+
+/* ===== Card clicable completa (overlay link) ===== */
+.card-link-overlay{
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* Accesibilidad: foco visible al tabular */
+.card-link-overlay:focus-visible{
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+/* Si algún día metes enlaces/botones dentro del card, que sigan funcionando */
+.card a:not(.card-link-overlay),
+.card button,
+.card input{
+  position: relative;
+  z-index: 2;
+}
