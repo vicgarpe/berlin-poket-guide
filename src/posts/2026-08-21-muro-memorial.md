@@ -6,6 +6,7 @@ lugar: "Berlín"
 hero: "/images/3-dia-3-relax-1200.jpg"
 alt: "Vista tranquila de la Isla de los Museos y cafés en Mitte"
 templateEngineOverride: njk,md
+permalink: /posts/{{ page.fileSlug }}/
 ---
 
 ## Qué ver (plan relajado)

@@ -6,6 +6,7 @@ lugar: "Berlín / Oranienburg"
 hero: "/images/2-dia2-sachsenhausen-1200.jpg"
 alt: "Collage del memorial de Sachsenhausen con la Torre A y el obelisco"
 templateEngineOverride: njk,md
+permalink: /posts/{{ page.fileSlug }}/
 ---
 
 ## Qué ver

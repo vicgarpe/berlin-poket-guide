@@ -6,6 +6,7 @@ lugar: "Berlín"
 hero: "/images/1-dia1-berlin-muro-monumental-1200.jpg"
 alt: "Fragmento del Muro con mural, Puerta de Brandeburgo y Fernsehturm al fondo"
 templateEngineOverride: njk,md
+permalink: /posts/{{ page.fileSlug }}/
 ---
 
 ## Qué ver
