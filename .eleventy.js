@@ -22,14 +22,24 @@ export default function(eleventyConfig) {
   eleventyConfig.addGlobalData("build", { year: new Date().getFullYear() });
 
   // --- Shortcodes Nunjucks para Google Maps ---
+  const _escapeHtml = (str = "") =>
+    String(str)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
   eleventyConfig.addNunjucksShortcode("gmap", (q, label) => {
     const url = "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
-    return `<a href="${url}" target="_blank" rel="noopener">${label || "Ver en Google Maps"}</a>`;
+    const txt = _escapeHtml(label || "Ver en Google Maps");
+    return `<a class="map-link" href="${url}" target="_blank" rel="noopener noreferrer"><span class="map-tag" aria-hidden="true">MAPS</span><span class="map-link-text">${txt}</span></a>`;
   });
 
   eleventyConfig.addNunjucksShortcode("gcoords", (lat, lon, label) => {
-    const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lon}`;
-    return `<a href="${url}" target="_blank" rel="noopener">${label || "Ver en Google Maps"}</a>`;
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat)},${encodeURIComponent(lon)}`;
+    const txt = _escapeHtml(label || "Ver en Google Maps");
+    return `<a class="map-link" href="${url}" target="_blank" rel="noopener noreferrer"><span class="map-tag" aria-hidden="true">MAPS</span><span class="map-link-text">${txt}</span></a>`;
   });
 
   // --- Directorios + pathPrefix para GitHub Pages (repo de proyecto) ---

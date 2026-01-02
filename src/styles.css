@@ -5,6 +5,8 @@
    ========================================================= */
 
 :root{
+  --accent: #bb3825;
+  --font-sans-condensed: "Roboto Condensed", "Arial Narrow", var(--font-sans), sans-serif;
   --font-sans: "Libre Franklin", system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-serif: "Source Serif 4", Georgia, "Times New Roman", serif;
 
@@ -175,3 +177,40 @@ a:hover{
   .card-footer{ padding: .65rem .95rem; }
   .content{ margin-top: 1.5rem; }
 }
+
+
+/* ===== Enlaces a Google Maps (shortcodes gmap / gcoords) ===== */
+.map-link{
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin: .15rem 0;
+  text-decoration: none;
+}
+
+.map-tag{
+  background: var(--accent);
+  border-radius: 4px;
+  color: #FFF;
+  display: inline-block;
+
+  padding: .12rem .42rem;
+  font-family: var(--font-sans-condensed);
+  font-weight: 800;
+  font-size: .78rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  line-height: 1.15;
+}
+
+.map-link-text{
+  font-family: var(--font-sans);
+  font-weight: 600;
+}
+
+/* Títulos nivel ## en posts */
+.content h2{
+  color: var(--accent);
+  font-weight: 800;
+}
+
