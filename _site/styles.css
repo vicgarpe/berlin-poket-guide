@@ -13,3 +13,8 @@ body { font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, "Helvet
 .card-text { line-height: 1.6; }
 .content p { margin-bottom: 1rem; }
 .content img { max-width: 100%; height: auto; border-radius: .5rem; }
+
+/* ===== UX: que se note que la tarjeta es clicable ===== */
+.post-card-link { cursor: pointer; }
+.post-card-link:hover .card-title { text-decoration: underline; }
+.post-card-link:focus-visible { outline: 2px solid currentColor; outline-offset: 4px; border-radius: .5rem; }
