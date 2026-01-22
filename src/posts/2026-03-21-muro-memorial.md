@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 title: "Día 3 — Mañana suave + preparar vuelo (BER 06:00)"
-excerpt: "Paseo ligero por el centro, compras de última hora y vuelta temprana al hotel. Preparativos para salir de madrugada hacia BER."
+excerpt: "Free tour del Muro y Guerra Fría por la mañana, paseo ligero por el centro y vuelta temprana al hotel. Preparativos para salir de madrugada hacia BER."
 lugar: "Berlín"
 hero: "/images/3-dia-3-relax-1200.jpg"
 alt: "Vista tranquila de la Isla de los Museos y cafés en Mitte"
@@ -18,19 +18,27 @@ permalink: /posts/{{ page.fileSlug }}/
 > Nota: al facturar maletas, conviene estar en la T1 **a las 04:00** (apertura) o muy poco después.
 
 ## Qué ver (plan relajado)
+- **Free tour “Muro de Berlín y Guerra Fría”** (mañana).
 - **Paseo por Museumsinsel / Nikolaiviertel** (corto, exterior).
 - **Hackescher Markt** para café/souvenirs.
-- **Opcional 60–90 min:** Memorial del Muro (**Bernauer Straße**) si os apetece un cierre temático.
+- **Vuelta temprana al hotel** para preparar equipaje y dormir pronto.
 
 ## Reservas necesarias
-Ninguna (si finalmente entráis a algún museo concreto, consultad entradas online).
+- ✅ **Reserva ya hecha — freetour.com “Muro de Berlín y Guerra Fría”**
+  - **Hora:** **10:00**
+  - **Reserva a nombre de:** **Víctor**
+  - Enlace general: <https://www.freetour.com/>
+  - **Punto de encuentro:** *confirmar en el email/confirmación* (ver tareas pendientes).
+  - Consejo: llegar **10–15 min antes**.
 
 ## Timetable estimado (orientativo)
 > Objetivo del día: ir tranquilos, volver pronto al hotel y **dormir temprano**.
 
-- **10:00–12:00** — Paseo suave (Museumsinsel → Nikolaiviertel)
-- **12:00–13:00** — Café / souvenirs (Hackescher Markt o zona)
-- **13:00–14:30** — Comida tranquila
+- **09:20** — Salida desde Alexanderplatz hacia el **punto de encuentro** del free tour
+- **09:45** — Llegada y margen (encontrar al guía / WC)
+- **10:00–12:15 · Free tour “Muro de Berlín y Guerra Fría”**
+- **12:15–13:15** — Comida / descanso (Mitte / Hackescher Markt)
+- **13:15–14:45** — Paseo suave (Museumsinsel → Nikolaiviertel) o compras de última hora
 - **15:00–17:00** — Descanso + compras “funcionales” (agua/snacks para el aeropuerto, farmacia si hace falta)
 - **17:00–20:00** — Packing (con calma) + cena temprana cerca del hotel
 - **20:00–21:30** — Últimas comprobaciones + a dormir pronto
@@ -94,7 +102,11 @@ Fuente: [Weatherspark (Berlín en marzo)](https://es.weatherspark.com/m/75981/3/
 - **Ruta al aeropuerto** revisada en BVG/DB + teléfono del taxi/VTC (si reserváis).
 
 ## Tareas pendientes (decisiones a tomar hoy)
-- **Confirmar datos del vuelo** (terminal, hora, y condiciones) y guardar localizador en un sitio común (grupo/nota).
+- ✅ **Free tour (10:00)**: abrir la confirmación de freetour.com y anotar:
+  - **punto exacto de encuentro**, nombre del guía/empresa y teléfono si aparece,
+  - ruta rápida desde Alexanderplatz,
+  - llegar **09:45**.
+- **Confirmar datos del vuelo** (terminal, hora, condiciones) y guardar localizador en un sitio común (grupo/nota).
 - **Decidir traslado a BER**:
   - **Plan A**: pre-reservar **van/taxi 6 plazas** (o 2 taxis) para salida **03:15–03:20**.
   - **Plan B**: transporte público — verificar combinación nocturna real en BVG/DB.
