@@ -1,7 +1,7 @@
 ---
 layout: post.njk
 title: "Día 1 — Muro y Berlín Monumental"
-excerpt: "Recorrido por el Muro (East Side Gallery), el antiguo paso fronterizo de Friedrichstraße y un free tour monumental."
+excerpt: "Tour monumental por el centro + Muro (East Side Gallery) + Tränenpalast. Además, free tour en español a las 15:30 (reserva freetour.com)."
 lugar: "Berlín"
 hero: "/images/1-dia1-berlin-muro-monumental-1200.jpg"
 alt: "Fragmento del Muro con mural, Puerta de Brandeburgo y Fernsehturm al fondo"
@@ -10,9 +10,12 @@ permalink: /posts/{{ page.fileSlug }}/
 ---
 
 ## Qué ver
-- **Free tour: Berlín Monumental** — recorrido guiado por el centro (Monumental).
+- **Free tour: Berlín Monumental (GuruWalk)** — recorrido guiado por el centro.
 - **East Side Gallery** — tramo de 1,3 km del antiguo Muro convertido en galería al aire libre.
 - **Tränenpalast (Palacio de las Lágrimas)** — antiguo control fronterizo en Friedrichstraße.
+- **Free tour (freetour.com, español)** — tour adicional por la tarde (15:30, 2 h, 2 personas).
+
+> Nota: este día tenéis **dos tours**. Si preferís ritmo más tranquilo, el de la tarde se puede tomar como “extra” y dejarlo como opcional.
 
 ## Reservas necesarias
 - ✅ **Reserva ya hecha — GuruWalk “Berlín Monumental”**
@@ -21,22 +24,36 @@ permalink: /posts/{{ page.fileSlug }}/
   - Enlace: <https://www.guruwalk.com/berlin>
   - Consejo: llegar **10–15 min antes**.
 
-{% gmap "Rotes Rathaus, Berlin", "Punto de encuentro — Rotes Rathaus" %}
+- ✅ **Reserva ya hecha — freetour.com (Español)**
+  - **Referencia:** **30212-20260122181408-320**
+  - **Fecha:** **2026-03-19**
+  - **Inicio:** **15:30** · **Duración:** **2 h**
+  - **Idioma:** Español · **Personas:** **2**
+  - **Nombre:** Víctor Garcia Peñas
+  - **Pagado:** 0,00 € · **Debido:** 0,00 €
+  - **Punto de encuentro:** *confirmar en la confirmación de freetour.com* (ver tareas pendientes)
+  - Enlace general: <https://www.freetour.com/>
+
+{% gmap "Rotes Rathaus, Berlin", "Punto de encuentro — GuruWalk (Rotes Rathaus)" %}
 {% gcoords 52.5186, 13.4081, "Rotes Rathaus — GPS" %}
 
 ## Timetable estimado (orientativo)
-> Ritmo tranquilo: 2–3 bloques + pausas. El tour va por la mañana; después el día se abre para Muro + museo sin prisa.
+> Ritmo tranquilo con pausas. Con dos tours, la clave es **evitar traslados largos entre bloques**.
 
 - **09:20** — Salida desde el hotel hacia **Rotes Rathaus**
-- **09:45** — Llegada y margen (encontrar al guía / fotos / WC)
+- **09:45** — Llegada y margen (encontrar al guía / WC)
 - **10:00–12:30 · Free tour “Berlín Monumental”** (GuruWalk)
 - **12:30–13:30** — Comida / descanso por la zona (Mitte / Hackescher Markt)
-- **13:30–14:00** — Traslado hacia **East Side Gallery** (Ostbahnhof)
-- **14:00–16:00 · East Side Gallery** (paseo completo, fotos y paradas)
-- **16:00–16:30** — Traslado hacia **Friedrichstraße**
-- **16:30–17:30 · Tränenpalast** (entrada gratuita; visita sin correr)
-- **17:30–18:15** — Vuelta tranquila a Alexanderplatz / merienda
+- **13:30–14:15** — Traslado hacia **Friedrichstraße** + margen
+- **14:15–15:00 · Tränenpalast** (entrada gratuita; visita “corta” para no ir con prisas)
+- **15:00–15:25** — Traslado al **punto del tour de freetour.com** (según confirmación)
+- **15:30–17:30 · Free tour (freetour.com, español)** *(2 personas; el resto puede hacer plan libre)*
+- **17:30–18:15** — Merienda / descanso + decidir bloque final
+- **18:15–19:30 · East Side Gallery (tramo corto al atardecer)** *(opción ligera)*
 - **Noche** — Cena cerca del hotel y descanso
+
+**Alternativa si queréis más calma (recomendada):**
+- Hacer **East Side Gallery** en bloque largo **por la tarde** (en vez del tour de 15:30), y dejar el free tour de freetour.com como “prescindible”.
 
 **Tip luz solar (Berlín):** el **19/03/2026** el sol sale aprox. a las **06:11** y se pone aprox. a las **18:17** (hora local).  
 Fuente: [Amanecer/atardecer en Berlín (marzo 2026)](https://www.timeanddate.com/sun/germany/berlin?month=3%2F1000)
@@ -56,31 +73,32 @@ Fuente: [Weatherspark (Berlín en marzo)](https://es.weatherspark.com/m/75981/3/
 ## En el lugar
 
 ### Horario sugerido y traslados (resumen)
-- **Free tour (Rotes Rathaus)**  
+- **GuruWalk (Rotes Rathaus)**  
   - Desde Alexanderplatz: a pie (≈10–15 min) o 1–2 paradas en U/S según ruta.
+- **Tränenpalast (Friedrichstraße)**  
+  - Desde Mitte/Rotes Rathaus: S/U-Bahn o paseo (según ruta).
 - **East Side Gallery**
   - Desde Alexanderplatz: **S3/S5/S7/S9 → Ostbahnhof** (≈5 min) + 10–15 min a pie.
-- **Tränenpalast**
-  - **S-Bahn Ostbahnhof → Friedrichstraße** (≈9–12 min). Entrada **gratuita**.
 
 ### Dónde comer (ideas prácticas entre paradas)
-- **Mitte / Hackescher Markt** (perfecto tras el tour).
-- **Ostbahnhof / Warschauer Straße** (rápido tras East Side).
+- **Mitte / Hackescher Markt** (perfecto tras el tour de la mañana).
+- **Friedrichstraße** (si os cuadra antes del tour de 15:30).
 - De regreso a **Alexanderplatz** (food courts en Alexa / Rathauspassagen).
 
 ### Cómo llegar (puntos clave)
 - **Base**: Alexanderplatz — nudo **S-Bahn/U-Bahn** + tranvía y buses.
-- **Punto del tour**: **Rotes Rathaus** (Ayuntamiento).
+- **Punto del tour (mañana)**: **Rotes Rathaus** (Ayuntamiento).
+- **Punto del tour (15:30)**: *pendiente de confirmar* (freetour.com).
 
 **Enlaces útiles (oficiales):**
 - Planificador de rutas BVG: [BVG Fahrinfo (journey planner)](https://www.bvg.de/en/connections/route)
 - S-Bahn Berlin (planificador y líneas): [S-Bahn Berlin](https://sbahn.berlin/en/)
 
-{% gmap "East Side Gallery, Berlin", "East Side Gallery (Maps)" %}
-{% gcoords 52.5050, 13.4396, "East Side Gallery — GPS" %}
-
 {% gmap "Tränenpalast, Berlin", "Tränenpalast (Maps)" %}
 {% gcoords 52.5208, 13.3873, "Tränenpalast — GPS" %}
+
+{% gmap "East Side Gallery, Berlin", "East Side Gallery (Maps)" %}
+{% gcoords 52.5050, 13.4396, "East Side Gallery — GPS" %}
 
 ## Un poco de historia (con enlaces)
 - **Muro de Berlín (1961–1989)**: símbolo de la división de la ciudad durante la Guerra Fría.  
@@ -91,6 +109,8 @@ Fuente: [Weatherspark (Berlín en marzo)](https://es.weatherspark.com/m/75981/3/
   Wikipedia: <https://es.wikipedia.org/wiki/Tr%C3%A4nenpalast>
 
 ## Tareas pendientes (para hoy)
-- ✅ **Confirmar la reserva de GuruWalk** (hora exacta, nombre del guía, punto delante del Ayuntamiento) y llegar **09:45**.
+- ✅ **GuruWalk (10:00)**: confirmar nombre del guía y llegar **09:45**.
+- ✅ **Freetour.com (15:30, 2 pers.)**: abrir la confirmación y anotar **punto exacto** + ruta desde Friedrichstraße/Rotes Rathaus.
+- **Coordinar al grupo**: mientras 2 hacen el tour de 15:30, decidir plan libre para el resto (Mitte / café / tiendas).
 - **Decidir billetes/abonos del día** (lo más probable: **24 h AB** si vais a moveros bastante).
-- **Decidir dónde comer** tras el tour (Mitte/Hackescher Markt) para no perder tiempo.
+- **Decidir dónde comer** (Mitte/Hackescher Markt) para no perder tiempo.
