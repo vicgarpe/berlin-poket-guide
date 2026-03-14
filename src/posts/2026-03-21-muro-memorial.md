@@ -56,6 +56,8 @@ permalink: /posts/{{ page.fileSlug }}/
 Fuente: [Tabla de amanecer/atardecer (Berlín, marzo 2026)](https://www.timeanddate.com/sun/germany/berlin?month=3%2F1000)
 
 ## Meteo (muy simple, para haceros una idea)
+{% wiki "recursos_meteo", "→ Previsión actualizada día a día (Open-Meteo)" %}
+
 A fecha de hoy (enero 2026) no existe una **previsión fiable** para marzo. Lo útil ahora es tener **referencias típicas** y dejar enlaces para mirar el pronóstico real cuando se acerque el viaje.
 
 - **Mediados de marzo suele ser fresco**: máximas medias aprox. **6–11 °C** (subiendo a lo largo del mes).

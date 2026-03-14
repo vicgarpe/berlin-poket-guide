@@ -73,7 +73,7 @@ export default function(eleventyConfig) {
     }
     const href = PATH_PREFIX + path;
     const txt = _escapeHtml(label || slug);
-    return `<a href="${href}" class="wiki-link">[[${txt}]]</a>`;
+    return `<a href="${href}" class="wiki-link">${txt}</a>`;
   });
 
   // --- Directorios + pathPrefix para GitHub Pages (repo de proyecto) ---
