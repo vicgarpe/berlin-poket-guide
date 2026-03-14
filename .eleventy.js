@@ -18,6 +18,13 @@ export default function(eleventyConfig) {
     return new Intl.DateTimeFormat(locale, options).format(dateObj);
   });
 
+  // --- Filtro de fecha con día de la semana: "miércoles — 18 mar 2026" ---
+  eleventyConfig.addFilter("formatDateFull", (dateObj, locale = "es-ES") => {
+    const weekday = new Intl.DateTimeFormat(locale, { weekday: "long" }).format(dateObj);
+    const date = new Intl.DateTimeFormat(locale, { day: "2-digit", month: "short", year: "numeric" }).format(dateObj);
+    return `${weekday} — ${date}`;
+  });
+
   // --- Dato global (año de build) para usar en plantillas ---
   eleventyConfig.addGlobalData("build", { year: new Date().getFullYear() });
 

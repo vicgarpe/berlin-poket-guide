@@ -80,7 +80,7 @@ permalink: "/index.html"
           </div>
 
           <div class="card-footer bg-white small text-muted">
-            {{ post.data.lugar or 'Parada' }} · {{ post.date | formatDate('es-ES') }}
+            {{ post.date | formatDateFull('es-ES') }}
           </div>
         </article>
       </a>

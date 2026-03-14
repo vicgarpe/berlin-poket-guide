@@ -23,7 +23,7 @@ layout: base.njk
         <p class="text-secondary lead">{{ excerpt }}</p>
       {% endif %}
       <div class="mt-auto small text-muted">
-        {{ lugar or "" }}{% if lugar %} — {% endif %}{{ page.date | formatDate('es-ES') }}
+        {{ page.date | formatDateFull('es-ES') }}
       </div>
     </div>
   </div>
