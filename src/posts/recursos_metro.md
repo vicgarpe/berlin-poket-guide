@@ -2,11 +2,11 @@
 layout: post.njk
 title: "Transporte — Metro/S-Bahn, apps y puntos clave (Berlín)"
 excerpt: "Ficha rápida para orientarse con U-Bahn/S-Bahn, instalar apps y tener a mano coordenadas de los sitios del viaje."
-lugar: "Berlín"
+modulo: "Recursos"
 hero: "/images/metro-berlin.webp"
 alt: "Mapa esquemático de U-Bahn y S-Bahn de Berlín con zonas tarifarias A/B/C"
 templateEngineOverride: njk,md
-permalink: /posts/{{ page.fileSlug }}/
+permalink: /recursos/recursos_metro/
 ---
 
 ## Mapa (para orientación y plan B offline)
@@ -33,49 +33,49 @@ permalink: /posts/{{ page.fileSlug }}/
 
 **Para qué la usaremos**
 - Conexiones a/de **BER**
-- Trenes regionales y S-Bahn (vista “más ferroviaria”)
+- Trenes regionales y S-Bahn (vista "más ferroviaria")
 - Notificaciones de cambios de andén/retenciones (si las activáis)
 
-### 3) (Opcional) Apps “mapa general”
+### 3) (Opcional) Apps "mapa general"
 - **Google Maps**: útil para caminar y ver horarios aproximados.
 - **Apple Maps**: alternativa equivalente en iPhone.
 > Consejo: marcad **favoritos** (hotel, BER, puntos de encuentro) para tenerlos a mano.
 
-**¿Google Maps sirve para rutas?**  
+**¿Google Maps sirve para rutas?**
 Sí, **sirve** (y para caminar es muy cómodo), pero para transporte público en Berlín yo lo usaría como **apoyo**:
 - **Google/Apple Maps**: bien para orientación, caminar y una primera idea de ruta/tiempos.
 - **BVG Fahrinfo**: suele ir mejor con **cambios, incidencias y tranvías/buses** dentro de la ciudad.
 - **DB Navigator**: muy útil para **trenes/regionales** y conexiones con **BER**.
 
-> Recomendación práctica: mirad la ruta en Google Maps si queréis, pero **confirmad** en BVG/DB cuando sea un trayecto “crítico” (aeropuerto, excursión, madrugada).
+> Recomendación práctica: mirad la ruta en Google Maps si queréis, pero **confirmad** en BVG/DB cuando sea un trayecto "crítico" (aeropuerto, excursión, madrugada).
 
 
 ## Cómo usar las apps (rápido, en 3 minutos)
 ### BVG Fahrinfo — mínimo imprescindible
 1) Abrir **Connections / Route**.
-2) Poner **From:** “Alexanderplatz” (o vuestro hotel) y **To:** destino.
+2) Poner **From:** "Alexanderplatz" (o vuestro hotel) y **To:** destino.
 3) Mirar:
    - **número de línea** (U5, S9, etc.)
    - **dirección** (terminus)
    - **andén** si lo muestra
-4) Guardar favoritos: “Alexanderplatz”, “Friedrichstraße”, “Ostbahnhof”, “Brandenburger Tor”, “BER T1-2”.
+4) Guardar favoritos: "Alexanderplatz", "Friedrichstraße", "Ostbahnhof", "Brandenburger Tor", "BER T1-2".
 
 **Tip equipaje:** en estaciones grandes, buscad **ascensor** (Lift) si hay maletas.
 
 ### DB Navigator — mínimo imprescindible
 1) Buscar ruta (From/To) y fijar hora.
 2) Activar notificaciones del viaje si queréis avisos de cambios.
-3) Guardar favoritos: “BER T1-2” y “Alexanderplatz”.
+3) Guardar favoritos: "BER T1-2" y "Alexanderplatz".
 
 ## Billetes y zonas (muy corto, para no liarnos)
 - **AB**: casi todo lo turístico en Berlín ciudad.
 - **C**: aeropuerto **BER** y algunas salidas fuera (según destino).
 - Para **BER ↔ Alexanderplatz** necesitáis **ABC**.
 
-> En el viaje: **Día 0** (llegada) = billete ABC seguro.  
+> En el viaje: **Día 0** (llegada) = billete ABC seguro.
 > **Día 2 (Sachsenhausen)**: decidir según si el tour incluye tren y según cuántos trayectos hagáis.
 
-## Consejos rápidos “anti-multa” (vale oro)
+## Consejos rápidos "anti-multa" (vale oro)
 - Si compráis **billete en papel**, **validarlo** en la máquina antes de subir (salvo que sea un billete que ya venga con validez impresa).
 - Si compráis **billete en app**, **activarlo** antes de entrar al andén/tren (mejor 1–2 min antes para evitar sustos).
 - En controles, suelen pedir: **billete + documento** si el billete va asociado a persona (según tipo).
@@ -84,7 +84,7 @@ Sí, **sirve** (y para caminar es muy cómodo), pero para transporte público en
 
 
 ## Coordenadas GPS y enlaces rápidos (los sitios del viaje)
-> Para abrir rápido en el móvil: usad los links “Maps” o las coordenadas.
+> Para abrir rápido en el móvil: usad los links "Maps" o las coordenadas.
 
 ### Base y transporte
 - {% gmap "Premier Inn Berlin Alexanderplatz, Berlin", "Hotel — Premier Inn Alexanderplatz" %}

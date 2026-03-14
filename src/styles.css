@@ -44,19 +44,47 @@ body{
 
 /* Header */
 .site-header{
-  padding-block: .75rem 1.25rem;
+  padding-block: 1rem 0;
   border-bottom: 1px solid var(--rule);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.75rem;
 }
+.site-brand{ margin-bottom: .75rem; }
 .site-title{
   font-family: var(--font-sans);
-  font-weight: 700;
-  letter-spacing: .01em;
-  font-size: clamp(1.25rem, 0.7vw + 1.1rem, 1.6rem);
+  font-weight: 800;
+  letter-spacing: -.02em;
+  font-size: clamp(2rem, 3vw + 1rem, 3.2rem);
+  line-height: 1;
 }
+.site-title a{ color: #9b3221; }
+.site-title a:hover{ color: var(--accent); }
 .site-tagline{
-  margin-top: .25rem;
+  font-family: var(--font-sans);
+  font-size: .82rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: .3rem;
 }
+
+/* Nav de módulos */
+.site-nav{
+  display: flex;
+  gap: 1.75rem;
+  padding-block: .6rem .9rem;
+  border-top: 1px solid var(--rule);
+}
+.site-nav a{
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: .82rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+}
+.site-nav a:hover,
+.site-nav a.active{ color: var(--accent); }
 
 /* Links */
 a{
@@ -209,9 +237,67 @@ a:hover{
   font-weight: 600;
 }
 
+/* Título principal del post */
+.post-title{
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 1.5vw + 1.2rem, 2.4rem);
+  color: #9b3221;
+  letter-spacing: -.01em;
+}
+
 /* Títulos nivel ## en posts */
 .content h2{
   color: var(--accent);
   font-weight: 800;
+}
+
+/* Títulos nivel ### */
+.content h3{
+  color: #7a3523;
+}
+
+/* Negrita en contenido */
+.content strong{
+  color: #7a3523;
+}
+
+/* Título de módulo (portada de Historia / Recursos) */
+.module-title{
+  font-family: var(--font-sans);
+  font-weight: 800;
+  color: #9b3221;
+  font-size: clamp(1.4rem, 1vw + 1.1rem, 2rem);
+  letter-spacing: -.01em;
+  line-height: 1.1;
+}
+
+/* Badge de módulo en fichas de recursos/historia */
+.module-badge{
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: .75rem;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Intro de portada */
+.portada-intro{
+  font-size: clamp(1rem, .3vw + .95rem, 1.1rem);
+  max-width: 72ch;
+}
+
+/* Wiki links [[nombre]] */
+.wiki-link{
+  color: #7a3523;
+  text-decoration-style: dotted;
+  text-decoration-color: currentColor;
+}
+.wiki-link:hover{ color: var(--accent); }
+
+/* Títulos nivel #### */
+.content h4{
+  color: #5b4240;
 }
 

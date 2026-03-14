@@ -1,3 +1,5 @@
+const PATH_PREFIX = "/berlin-poket-guide/";
+
 export default function(eleventyConfig) {
   // --- Passthrough de estáticos ---
   // Soporta ambas rutas por si usas "imagenes" o "images"
@@ -5,12 +7,19 @@ export default function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "src/images": "images" });
   eleventyConfig.addPassthroughCopy({ "src/styles.css": "styles.css" });
 
-  // --- Colección de posts ordenados por fecha ascendente ---
-  eleventyConfig.addCollection("paradas", (collectionApi) => {
-    return collectionApi
-      .getFilteredByGlob("src/posts/*.md")
-      .sort((a, b) => a.date - b.date);
-  });
+  // --- Colecciones por módulo ---
+  // Agenda: posts con fecha (YYYY-MM-DD-*.md)
+  eleventyConfig.addCollection("agenda", (api) =>
+    api.getFilteredByGlob("src/posts/[0-9]*.md").sort((a, b) => a.date - b.date)
+  );
+  // Historia: fichas historia_*.md
+  eleventyConfig.addCollection("historia", (api) =>
+    api.getFilteredByGlob("src/posts/historia_*.md")
+  );
+  // Recursos: fichas recursos_*.md
+  eleventyConfig.addCollection("recursos", (api) =>
+    api.getFilteredByGlob("src/posts/recursos_*.md")
+  );
 
   // --- Filtro de fecha para Nunjucks: {{ fecha | formatDate('es-ES') }} ---
   eleventyConfig.addFilter("formatDate", (dateObj, locale = "es-ES", opts) => {
@@ -49,9 +58,27 @@ export default function(eleventyConfig) {
     return `<a class="map-link" href="${url}" target="_blank" rel="noopener noreferrer"><span class="map-tag" aria-hidden="true">MAPS</span><span class="map-link-text">${txt}</span></a>`;
   });
 
+  // --- Shortcode wiki: [[slug]] enlaza entre fichas por nombre de fichero ---
+  eleventyConfig.addNunjucksShortcode("wiki", (slug, label) => {
+    slug = slug.replace(/\.md$/, "");
+    let path;
+    if (/^\d{4}-\d{2}-\d{2}-/.test(slug)) {
+      path = `posts/${slug.replace(/^\d{4}-\d{2}-\d{2}-/, "")}/`;
+    } else if (slug.startsWith("historia_")) {
+      path = `historia/${slug}/`;
+    } else if (slug.startsWith("recursos_")) {
+      path = `recursos/${slug}/`;
+    } else {
+      path = `posts/${slug}/`;
+    }
+    const href = PATH_PREFIX + path;
+    const txt = _escapeHtml(label || slug);
+    return `<a href="${href}" class="wiki-link">[[${txt}]]</a>`;
+  });
+
   // --- Directorios + pathPrefix para GitHub Pages (repo de proyecto) ---
   return {
     dir: { input: "src", output: "_site", includes: "_includes" },
-    pathPrefix: "/berlin-poket-guide/"
+    pathPrefix: PATH_PREFIX
   };
 }

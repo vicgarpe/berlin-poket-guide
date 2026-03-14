@@ -18,12 +18,16 @@ layout: base.njk
 
   <div class="col-12 col-lg-5 d-flex">
     <div class="d-flex flex-column">
-      <h2 class="display-6 fw-bold lh-sm">{{ title }}</h2>
+      <h2 class="post-title lh-sm">{{ title }}</h2>
       {% if excerpt %}
         <p class="text-secondary lead">{{ excerpt }}</p>
       {% endif %}
       <div class="mt-auto small text-muted">
-        {{ page.date | formatDateFull('es-ES') }}
+        {% if modulo %}
+          <span class="module-badge">{{ modulo }}</span>
+        {% else %}
+          {{ page.date | formatDateFull('es-ES') }}
+        {% endif %}
       </div>
     </div>
   </div>
