@@ -65,6 +65,7 @@ permalink: /galeria/index.html
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/exifr@7/dist/full.umd.js"></script>
 <script>
 const DROPBOX = {
   appKey:       '{{ dropbox.appKey }}',
@@ -283,32 +284,135 @@ async function openLightbox(idx) {
   await loadItem(idx);
 }
 
+function buildExifHTML(exif, dbxMeta, fileName) {
+  const rows = [];
+
+  // Nombre del archivo
+  if (fileName) rows.push(`<span style="opacity:.6;font-size:.78rem">${fileName}</span>`);
+
+  // Fecha
+  const dateRaw = exif?.DateTimeOriginal || (dbxMeta?.time_taken ? new Date(dbxMeta.time_taken) : null);
+  if (dateRaw) {
+    const d = dateRaw instanceof Date ? dateRaw : new Date(dateRaw);
+    rows.push(d.toLocaleDateString('es-ES', { weekday:'long', day:'2-digit', month:'long', year:'numeric' })
+      + ' · ' + d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' }));
+  }
+
+  // Dimensiones
+  const w = exif?.ImageWidth  || dbxMeta?.dimensions?.width;
+  const h = exif?.ImageHeight || dbxMeta?.dimensions?.height;
+  if (w && h) rows.push(`${w} × ${h} px`);
+
+  // Cámara
+  const cam = [exif?.Make, exif?.Model].filter(Boolean).join(' ');
+  if (cam) rows.push(cam);
+
+  // Exposición
+  const exp = [];
+  if (exif?.FocalLength)     exp.push(`${exif.FocalLength.toFixed(1)} mm`);
+  if (exif?.FNumber)         exp.push(`f/${exif.FNumber}`);
+  if (exif?.ExposureTime)    exp.push(exif.ExposureTime < 1 ? `1/${Math.round(1/exif.ExposureTime)} s` : `${exif.ExposureTime} s`);
+  if (exif?.ISOSpeedRatings) exp.push(`ISO ${exif.ISOSpeedRatings}`);
+  if (exp.length) rows.push(exp.join('  ·  '));
+
+  // Flash y balance de blancos
+  const extras = [];
+  if (exif?.Flash !== undefined) extras.push((exif.Flash & 1) ? 'Flash' : 'Sin flash');
+  if (exif?.WhiteBalance !== undefined) extras.push(exif.WhiteBalance === 0 ? 'WB auto' : 'WB manual');
+  if (extras.length) rows.push(extras.join('  ·  '));
+
+  // GPS: exifr da lat/lon en decimal directamente
+  const lat = exif?.latitude  ?? dbxMeta?.location?.latitude;
+  const lon = exif?.longitude ?? dbxMeta?.location?.longitude;
+  if (lat != null && lon != null) {
+    const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(lat.toFixed(5) + ',' + lon.toFixed(5))}`;
+    rows.push(`<a class="map-link" href="${url}" target="_blank" rel="noopener noreferrer"><span class="map-tag">MAPS</span><span class="map-link-text">${lat.toFixed(5)}, ${lon.toFixed(5)}</span></a>`);
+  }
+
+  return rows;
+}
+
+async function fetchExifFromFile(path) {
+  if (typeof exifr === 'undefined') return null;
+  try {
+    // Solo los primeros 64 KB del fichero original (EXIF siempre está al inicio del JPEG)
+    const link = await getTempLink(path);
+    const r = await fetch(link, { headers: { Range: 'bytes=0-65535' } });
+    const buf = await r.arrayBuffer();
+    return await exifr.parse(buf);
+  } catch { return null; }
+}
+
+let _lastTap = 0;
+
 async function loadItem(idx) {
   const content = document.getElementById('lightbox-content');
   const caption = document.getElementById('lightbox-caption');
   content.innerHTML = '<div class="lightbox-spinner"><div class="spinner-border text-light"></div></div>';
-  caption.textContent = '';
+  caption.innerHTML = '';
+  caption.style.cursor = '';
+  caption.title = '';
+  caption.dataset.exif = '';
+  _lastTap = 0;
 
   const file = allFiles[idx];
-  const dateStr = file.media_info?.metadata?.time_taken
-    ? new Date(file.media_info.metadata.time_taken)
-        .toLocaleDateString('es-ES', { weekday:'long', day:'2-digit', month:'short', year:'numeric' })
-    : '';
+
+  // Metadatos Dropbox (para GPS y fallback de fecha/dimensiones en vídeos)
+  let dbxMeta = null;
+  try {
+    const r = await dbxJSON('https://api.dropboxapi.com/2/files/get_metadata', {
+      path: file.path_lower, include_media_info: true
+    });
+    dbxMeta = r.media_info?.metadata || null;
+  } catch { /* sin metadatos Dropbox */ }
 
   try {
     if (isVideo(file)) {
+      // Vídeos: solo metadatos Dropbox, no EXIF
       const poster = allThumbs[file.path_lower] || '';
       if (poster) content.innerHTML = `<img class="lightbox-media" src="${poster}" alt="${file.name}">`;
       const link = await getTempLink(file.path_lower);
       content.innerHTML = `<video class="lightbox-media" controls autoplay playsinline preload="auto"${poster ? ` poster="${poster}"` : ''} src="${link}"></video>`;
+
+      const rows = buildExifHTML(null, dbxMeta, file.name);
+      setCaptionAndExif(file, dbxMeta, rows);
     } else {
-      const src = await getLargeThumb(file.path_lower);
+      // Imágenes: miniatura + EXIF del fichero original en paralelo
+      const [src, exif] = await Promise.all([
+        getLargeThumb(file.path_lower),
+        fetchExifFromFile(file.path_lower)
+      ]);
       content.innerHTML = `<img class="lightbox-media" src="${src}" alt="${file.name}">`;
+
+      const rows = buildExifHTML(exif, dbxMeta, file.name);
+      setCaptionAndExif(file, exif || dbxMeta, rows);
     }
-    caption.textContent = dateStr;
   } catch {
     content.innerHTML = `<p class="text-white text-center p-4">No se pudo cargar el archivo</p>`;
   }
+}
+
+function setCaptionAndExif(file, meta, exifRows) {
+  const caption = document.getElementById('lightbox-caption');
+
+  // Fecha para caption: preferir EXIF DateTimeOriginal
+  const dateRaw = meta?.DateTimeOriginal || (meta?.time_taken ? new Date(meta.time_taken) : null);
+  const dateStr = dateRaw
+    ? (dateRaw instanceof Date ? dateRaw : new Date(dateRaw))
+        .toLocaleDateString('es-ES', { weekday:'long', day:'2-digit', month:'short', year:'numeric' })
+    : '';
+  const w = meta?.ImageWidth  || meta?.dimensions?.width;
+  const h = meta?.ImageHeight || meta?.dimensions?.height;
+  const resStr = w && h ? `${w} × ${h} px` : '';
+
+  const parts = [dateStr, resStr].filter(Boolean);
+  caption.innerHTML = parts.length
+    ? parts.map(s => `<span>${s}</span>`).join('<span style="opacity:.4"> · </span>')
+    : `<span style="opacity:.4">${file.name}</span>`;
+
+  caption.dataset.exif = exifRows.length ? JSON.stringify(exifRows) : '';
+  caption.style.cursor = exifRows.length ? 'pointer' : '';
+  caption.title = exifRows.length ? 'Doble tap para más datos' : '';
 }
 
 function closeLightbox() {
@@ -323,6 +427,26 @@ function navLightbox(dir) {
   currentIdx = (currentIdx + dir + allFiles.length) % allFiles.length;
   loadItem(currentIdx);
 }
+
+// Doble tap en caption → overlay EXIF
+document.getElementById('lightbox-caption').addEventListener('click', () => {
+  const caption = document.getElementById('lightbox-caption');
+  const content = document.getElementById('lightbox-content');
+  const now = Date.now();
+  if (now - _lastTap < 320 && caption.dataset.exif) {
+    let exifEl = content.querySelector('.lightbox-exif');
+    if (!exifEl) {
+      exifEl = document.createElement('div');
+      exifEl.className = 'lightbox-exif exif-visible exif-active';
+      exifEl.innerHTML = JSON.parse(caption.dataset.exif).map(r => `<div class="exif-row">${r}</div>`).join('');
+      content.appendChild(exifEl);
+    } else {
+      exifEl.classList.toggle('exif-visible');
+      exifEl.classList.toggle('exif-active');
+    }
+  }
+  _lastTap = now;
+});
 
 document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
 document.getElementById('lightbox-prev').addEventListener('click', () => navLightbox(-1));
