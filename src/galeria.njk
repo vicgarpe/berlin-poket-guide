@@ -1,0 +1,478 @@
+---
+layout: base.njk
+title: "Galería — Guía de Berlín"
+permalink: /galeria/index.html
+---
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2 class="module-title mb-0">Galería</h2>
+  <label class="gallery-upload-btn d-none" id="gallery-upload-label" for="upload-input">
+    <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+      <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z"/>
+    </svg>
+    Subir
+  </label>
+  <input type="file" id="upload-input" accept="image/*,video/*" multiple class="d-none">
+</div>
+
+<div id="upload-progress" class="mb-3 d-none">
+  <div class="progress" style="height:5px">
+    <div id="upload-bar" class="progress-bar" style="width:0%;background:var(--accent)"></div>
+  </div>
+  <p id="upload-label" class="small text-muted mt-1 mb-0"></p>
+</div>
+
+<div id="gallery-status" class="text-center py-5">
+  <div class="spinner-border text-secondary" role="status" style="width:2rem;height:2rem"></div>
+  <p class="mt-3 text-muted small">Conectando con Dropbox…</p>
+</div>
+
+<div id="gallery-error" class="alert d-none" role="alert"
+     style="border:1px solid var(--rule);background:#fff9f7;color:#7a3523;border-radius:.65rem"></div>
+
+<div id="gallery-empty" class="text-center py-5 d-none">
+  <p class="text-muted">No hay fotos todavía. ¡Sube la primera!</p>
+</div>
+
+<div id="gallery-grid" class="gallery-grid d-none"></div>
+
+{# Lightbox #}
+<div id="lightbox" class="lightbox-overlay d-none" role="dialog" aria-modal="true" tabindex="-1">
+  <button class="lightbox-close" id="lightbox-close" aria-label="Cerrar">&times;</button>
+  <button class="lightbox-prev" id="lightbox-prev" aria-label="Anterior">&#8249;</button>
+  <button class="lightbox-next" id="lightbox-next" aria-label="Siguiente">&#8250;</button>
+  <div class="lightbox-inner">
+    <div id="lightbox-content" class="lightbox-content"></div>
+    <p id="lightbox-caption" class="lightbox-caption"></p>
+  </div>
+</div>
+
+<script>
+const DROPBOX = {
+  appKey:       '{{ dropbox.appKey }}',
+  appSecret:    '{{ dropbox.appSecret }}',
+  refreshToken: '{{ dropbox.refreshToken }}',
+  folder:       '{{ dropbox.folder }}'
+};
+const UPLOAD = {
+  chunkThreshold: {{ galeria.uploadChunkThreshold }} * 1024 * 1024,
+  partSize:       {{ galeria.uploadPartSize }} * 1024 * 1024
+};
+
+let token = null;
+let allFiles = [];
+let allThumbs = {};
+let currentIdx = 0;
+
+document.addEventListener('DOMContentLoaded', initGallery);
+
+// ─── Init ───────────────────────────────────────────────────────────────────
+
+async function initGallery() {
+  try {
+    token = await getAccessToken();
+    const files = await listFolder();
+    allFiles = sortByDate(files.filter(isMedia));
+    if (allFiles.length === 0) {
+      setStatus('hide');
+      document.getElementById('gallery-empty').classList.remove('d-none');
+      document.getElementById('gallery-upload-label').classList.remove('d-none');
+      return;
+    }
+    allThumbs = await batchThumbs(allFiles);
+    renderGrid(allFiles, allThumbs);
+  } catch (err) {
+    showError(err.message || 'Error al cargar la galería');
+  }
+}
+
+// ─── Dropbox API ─────────────────────────────────────────────────────────────
+
+async function getAccessToken() {
+  const r = await fetch('https://api.dropboxapi.com/oauth2/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type:    'refresh_token',
+      refresh_token: DROPBOX.refreshToken,
+      client_id:     DROPBOX.appKey,
+      client_secret: DROPBOX.appSecret
+    })
+  });
+  const d = await r.json();
+  if (!d.access_token) throw new Error('No se pudo conectar con Dropbox');
+  return d.access_token;
+}
+
+async function dbxJSON(url, body) {
+  const r = await fetch(url, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return r.json();
+}
+
+async function listFolder() {
+  let entries = [];
+  let d = await dbxJSON('https://api.dropboxapi.com/2/files/list_folder', {
+    path: DROPBOX.folder, include_media_info: true, limit: 200
+  });
+  entries = entries.concat(d.entries || []);
+  while (d.has_more) {
+    d = await dbxJSON('https://api.dropboxapi.com/2/files/list_folder/continue', { cursor: d.cursor });
+    entries = entries.concat(d.entries || []);
+  }
+  return entries;
+}
+
+function isMedia(f) {
+  return f['.tag'] === 'file' && /\.(jpe?g|png|gif|webp|heic|heif|mp4|mov|m4v|avi|mkv)$/i.test(f.name);
+}
+function isVideo(f) {
+  return /\.(mp4|mov|m4v|avi|mkv)$/i.test(f.name);
+}
+
+function sortByDate(files) {
+  return files.sort((a, b) => {
+    const da = a.media_info?.metadata?.time_taken || a.client_modified || '';
+    const db = b.media_info?.metadata?.time_taken || b.client_modified || '';
+    return da < db ? -1 : da > db ? 1 : 0;
+  });
+}
+
+async function batchThumbs(files) {
+  const map = {};
+  for (let i = 0; i < files.length; i += 25) {
+    const chunk = files.slice(i, i + 25);
+    const r = await fetch('https://content.dropboxapi.com/2/files/get_thumbnail_batch', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        entries: chunk.map(f => ({
+          path: f.path_lower,
+          format: { '.tag': 'jpeg' },
+          size:   { '.tag': 'w480h320' },
+          mode:   { '.tag': 'fitone_bestfit' }
+        }))
+      })
+    });
+    const d = await r.json();
+    for (const e of (d.entries || [])) {
+      if (e['.tag'] === 'success') {
+        map[e.metadata.path_lower] = 'data:image/jpeg;base64,' + e.thumbnail;
+      }
+    }
+  }
+  return map;
+}
+
+async function getTempLink(path) {
+  const d = await dbxJSON('https://api.dropboxapi.com/2/files/get_temporary_link', { path });
+  return d.link;
+}
+
+async function getLargeThumb(path) {
+  const r = await fetch('https://content.dropboxapi.com/2/files/get_thumbnail', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Dropbox-API-Arg': JSON.stringify({
+        path,
+        format: { '.tag': 'jpeg' },
+        size:   { '.tag': 'w2048h1536' },
+        mode:   { '.tag': 'fitone_bestfit' }
+      })
+    }
+  });
+  if (!r.ok) throw new Error('No se pudo cargar la imagen');
+  return URL.createObjectURL(await r.blob());
+}
+
+// ─── Render grid ─────────────────────────────────────────────────────────────
+
+function renderGrid(files, thumbs) {
+  setStatus('hide');
+  const grid = document.getElementById('gallery-grid');
+  grid.innerHTML = '';
+
+  files.forEach((file, idx) => {
+    const thumb = thumbs[file.path_lower];
+    const video = isVideo(file);
+    const item = document.createElement('div');
+    item.className = 'gallery-item' + (video ? ' gallery-item--video' : '');
+    item.dataset.idx = idx;
+
+    if (thumb) {
+      const img = document.createElement('img');
+      img.src = thumb;
+      img.alt = file.name;
+      img.loading = 'lazy';
+      item.appendChild(img);
+    } else {
+      item.classList.add('gallery-item--nothumb');
+      item.dataset.name = file.name;
+    }
+
+    if (video) {
+      const play = document.createElement('div');
+      play.className = 'play-btn';
+      play.setAttribute('aria-hidden', 'true');
+      play.innerHTML = `<svg viewBox="0 0 24 24" fill="white" width="44" height="44">
+        <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/>
+        <path d="M10 8l6 4-6 4V8z"/>
+      </svg>`;
+      item.appendChild(play);
+    }
+
+    item.addEventListener('click', () => openLightbox(idx));
+    grid.appendChild(item);
+  });
+
+  grid.classList.remove('d-none');
+  document.getElementById('gallery-upload-label').classList.remove('d-none');
+}
+
+// ─── Lightbox ────────────────────────────────────────────────────────────────
+
+async function openLightbox(idx) {
+  currentIdx = idx;
+  const lb = document.getElementById('lightbox');
+  lb.classList.remove('d-none');
+  document.body.style.overflow = 'hidden';
+  await loadItem(idx);
+}
+
+async function loadItem(idx) {
+  const content = document.getElementById('lightbox-content');
+  const caption = document.getElementById('lightbox-caption');
+  content.innerHTML = '<div class="lightbox-spinner"><div class="spinner-border text-light"></div></div>';
+  caption.textContent = '';
+
+  const file = allFiles[idx];
+  const dateStr = file.media_info?.metadata?.time_taken
+    ? new Date(file.media_info.metadata.time_taken)
+        .toLocaleDateString('es-ES', { weekday:'long', day:'2-digit', month:'short', year:'numeric' })
+    : '';
+
+  try {
+    if (isVideo(file)) {
+      const poster = allThumbs[file.path_lower] || '';
+      if (poster) content.innerHTML = `<img class="lightbox-media" src="${poster}" alt="${file.name}">`;
+      const link = await getTempLink(file.path_lower);
+      content.innerHTML = `<video class="lightbox-media" controls autoplay playsinline preload="auto"${poster ? ` poster="${poster}"` : ''} src="${link}"></video>`;
+    } else {
+      const src = await getLargeThumb(file.path_lower);
+      content.innerHTML = `<img class="lightbox-media" src="${src}" alt="${file.name}">`;
+    }
+    caption.textContent = dateStr;
+  } catch {
+    content.innerHTML = `<p class="text-white text-center p-4">No se pudo cargar el archivo</p>`;
+  }
+}
+
+function closeLightbox() {
+  const lb = document.getElementById('lightbox');
+  lb.classList.add('d-none');
+  document.getElementById('lightbox-content').innerHTML = '';
+  document.getElementById('lightbox-caption').textContent = '';
+  document.body.style.overflow = '';
+}
+
+function navLightbox(dir) {
+  currentIdx = (currentIdx + dir + allFiles.length) % allFiles.length;
+  loadItem(currentIdx);
+}
+
+document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
+document.getElementById('lightbox-prev').addEventListener('click', () => navLightbox(-1));
+document.getElementById('lightbox-next').addEventListener('click', () => navLightbox(1));
+document.getElementById('lightbox').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeLightbox();
+});
+document.addEventListener('keydown', e => {
+  if (document.getElementById('lightbox').classList.contains('d-none')) return;
+  if (e.key === 'Escape')      closeLightbox();
+  if (e.key === 'ArrowLeft')   navLightbox(-1);
+  if (e.key === 'ArrowRight')  navLightbox(1);
+});
+
+// ─── Upload ──────────────────────────────────────────────────────────────────
+
+function fmtSize(bytes) {
+  return bytes < 1024 * 1024
+    ? Math.round(bytes / 1024) + ' KB'
+    : (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+}
+
+const _spin = ['⠋','⠙','⠹','⠸','⠼','⠴','⠦','⠧','⠇','⠏'];
+let _spinTimer = null, _spinIdx = 0, _spinLabel = null, _spinText = '';
+
+function spinStart(labelEl, text) {
+  _spinLabel = labelEl; _spinText = text; _spinIdx = 0;
+  _spinTimer = setInterval(() => {
+    _spinLabel.textContent = _spin[_spinIdx++ % _spin.length] + '  ' + _spinText;
+  }, 100);
+}
+function spinText(text)  { _spinText = text; }
+function spinStop()      { clearInterval(_spinTimer); _spinTimer = null; }
+
+document.getElementById('upload-input').addEventListener('change', async e => {
+  const files = Array.from(e.target.files);
+  if (!files.length) return;
+  const progress = document.getElementById('upload-progress');
+  const bar      = document.getElementById('upload-bar');
+  const label    = document.getElementById('upload-label');
+  progress.classList.remove('d-none');
+  bar.style.width = '0%';
+  spinStart(label, `Preparando ${files.length === 1 ? files[0].name : files.length + ' archivos'}…`);
+
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const base  = Math.round((i / files.length) * 100);
+    const range = Math.round(100 / files.length);
+    try {
+      await uploadFile(
+        file,
+        pct  => { bar.style.width = `${base + Math.round(pct * range / 100)}%`; },
+        text => { spinText(text); }
+      );
+    } catch (err) {
+      spinText(`${file.name} — Error: ${err.message}`);
+    }
+  }
+
+  spinStop();
+  bar.style.width = '100%';
+  label.textContent = '✓  ¡Subida completada! Actualizando galería…';
+  e.target.value = '';
+
+  setTimeout(async () => {
+    progress.classList.add('d-none');
+    document.getElementById('gallery-grid').classList.add('d-none');
+    setStatus('show');
+    token = await getAccessToken();
+    const newFiles = await listFolder();
+    allFiles = sortByDate(newFiles.filter(isMedia));
+    const thumbs = await batchThumbs(allFiles);
+    renderGrid(allFiles, thumbs);
+  }, 1200);
+});
+
+function uploadSingle(file, destPath, onProgress, onStatus) {
+  return new Promise((resolve, reject) => {
+    onStatus(`${file.name} [${fmtSize(file.size)}] — subiendo…`);
+    const xhr = new XMLHttpRequest();
+    xhr.upload.onprogress = ev => {
+      if (ev.lengthComputable) {
+        const pct = Math.round(ev.loaded / ev.total * 100);
+        onProgress(pct);
+        onStatus(`${file.name} [${fmtSize(file.size)}] — ${pct}%`);
+      }
+    };
+    xhr.onload = () => {
+      const d = JSON.parse(xhr.responseText);
+      if (d.error_summary) reject(new Error(d.error_summary));
+      else resolve(d);
+    };
+    xhr.onerror = () => reject(new Error('Error de red'));
+    xhr.open('POST', 'https://content.dropboxapi.com/2/files/upload');
+    xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+    xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+    xhr.setRequestHeader('Dropbox-API-Arg', JSON.stringify({ path: destPath, mode: 'add', autorename: true, mute: false }));
+    xhr.send(file);
+  });
+}
+
+async function safeDestPath(name) {
+  const base = name.replace(/(\.[^.]+)$/, '');
+  const ext  = name.includes('.') ? name.slice(name.lastIndexOf('.')) : '';
+  let candidate = DROPBOX.folder + '/' + name;
+  let n = 1;
+  while (true) {
+    const r = await dbxJSON('https://api.dropboxapi.com/2/files/get_metadata', { path: candidate });
+    if (r['.tag'] === 'file' || r['.tag'] === 'folder') {
+      candidate = `${DROPBOX.folder}/${base} (${n++})${ext}`;
+    } else {
+      return candidate;
+    }
+  }
+}
+
+async function uploadFile(file, onProgress, onStatus) {
+  onStatus(`${file.name} — comprobando nombre…`);
+  const destPath = await safeDestPath(file.name);
+  const renamed = destPath !== DROPBOX.folder + '/' + file.name;
+  if (renamed) onStatus(`${file.name} — duplicado, se guardará como "${destPath.split('/').pop()}"`);
+  if (file.size <= UPLOAD.chunkThreshold) {
+    await uploadSingle(file, destPath, onProgress, onStatus);
+    return;
+  }
+
+  // Subida por sesión para ficheros grandes
+  const PART = UPLOAD.partSize;
+  let offset = 0;
+  const totalParts = Math.ceil(file.size / PART);
+  let part = 0;
+
+  onStatus(`${file.name} [${fmtSize(file.size)} > 150 MB — troceamos en ${totalParts} chunks]`);
+  const startR = await fetch('https://content.dropboxapi.com/2/files/upload_session/start', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/octet-stream',
+      'Dropbox-API-Arg': JSON.stringify({ close: false })
+    },
+    body: file.slice(0, PART)
+  });
+  const { session_id } = await startR.json();
+  offset += PART;
+  onProgress(Math.round(++part / totalParts * 100));
+  onStatus(`${file.name} [chunk ${part}/${totalParts} enviado]`);
+
+  while (offset < file.size - PART) {
+    onStatus(`${file.name} [procesando chunk ${part + 1}/${totalParts}…]`);
+    await fetch('https://content.dropboxapi.com/2/files/upload_session/append_v2', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/octet-stream',
+        'Dropbox-API-Arg': JSON.stringify({ cursor: { session_id, offset }, close: false })
+      },
+      body: file.slice(offset, offset + PART)
+    });
+    offset += PART;
+    onProgress(Math.round(++part / totalParts * 100));
+    onStatus(`${file.name} [chunk ${part}/${totalParts} enviado]`);
+  }
+  onStatus(`${file.name} [finalizando sesión…]`);
+
+  const finishR = await fetch('https://content.dropboxapi.com/2/files/upload_session/finish', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/octet-stream',
+      'Dropbox-API-Arg': JSON.stringify({
+        cursor: { session_id, offset },
+        commit: { path: destPath, mode: 'add', autorename: true }
+      })
+    },
+    body: file.slice(offset)
+  });
+  const d = await finishR.json();
+  if (d.error_summary) throw new Error(d.error_summary);
+}
+
+// ─── Util ─────────────────────────────────────────────────────────────────────
+
+function setStatus(mode) {
+  document.getElementById('gallery-status').classList.toggle('d-none', mode === 'hide');
+}
+function showError(msg) {
+  setStatus('hide');
+  const el = document.getElementById('gallery-error');
+  el.textContent = msg;
+  el.classList.remove('d-none');
+}
+</script>

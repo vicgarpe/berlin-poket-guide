@@ -1,3 +1,4 @@
+import 'dotenv/config';
 const PATH_PREFIX = "/berlin-poket-guide/";
 
 export default function(eleventyConfig) {
@@ -36,6 +37,14 @@ export default function(eleventyConfig) {
 
   // --- Dato global (año de build) para usar en plantillas ---
   eleventyConfig.addGlobalData("build", { year: new Date().getFullYear() });
+
+  // --- Credenciales Dropbox (desde .env, solo se incrustan en galeria.njk) ---
+  eleventyConfig.addGlobalData("dropbox", {
+    appKey:       process.env.DROPBOX_APP_KEY       || "",
+    appSecret:    process.env.DROPBOX_APP_SECRET    || "",
+    refreshToken: process.env.DROPBOX_REFRESH_TOKEN || "",
+    folder:       "/Almacen-archivo/2026-berlin"
+  });
 
   // --- Shortcodes Nunjucks para Google Maps ---
   const _escapeHtml = (str = "") =>

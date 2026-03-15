@@ -21,12 +21,13 @@
         <h1 class="site-title mb-0">
           <a href="{{ '/' | url }}" class="text-decoration-none">Guía de Berlín</a>
         </h1>
-        <p class="site-tagline mb-0">Marzo 2026 · Itinerario · Historia · Recursos</p>
+        <p class="site-tagline mb-0">Marzo 2026 · Itinerario · Historia · Recursos · Galería</p>
       </div>
       <nav class="site-nav" aria-label="Módulos">
         <a href="{{ '/' | url }}"{% if page.url == '/' %} class="active"{% endif %}>Guía</a>
         <a href="{{ '/historia/' | url }}"{% if '/historia/' in page.url %} class="active"{% endif %}>Historia</a>
         <a href="{{ '/recursos/' | url }}"{% if '/recursos/' in page.url %} class="active"{% endif %}>Recursos</a>
+        <a href="{{ '/galeria/' | url }}"{% if '/galeria/' in page.url %} class="active"{% endif %}>Galería</a>
       </nav>
     </header>
 
