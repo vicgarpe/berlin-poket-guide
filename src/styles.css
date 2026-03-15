@@ -85,6 +85,10 @@ body{
 }
 .site-nav a:hover,
 .site-nav a.active{ color: var(--accent); }
+@media (max-width: 400px){
+  .site-nav{ gap: 1rem; }
+  .site-nav a{ font-size: .74rem; letter-spacing: .04em; }
+}
 
 /* Links */
 a{
