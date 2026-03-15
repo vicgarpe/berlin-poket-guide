@@ -1,30 +1,26 @@
 # Galería — Estado de implementación
 
-## ✅ Hecho
+## ✅ Módulo cerrado y en producción
 
-- Módulo galería completo implementado en `src/galeria.njk`
+- Galería Dropbox con grid de columnas CSS (proporciones naturales, fotos y vídeos)
 - Cifrado AES-256-GCM post-build en `scripts/encrypt-galeria.mjs`
   - `npm run serve` → galería sin contraseña (dev)
-  - `npm run build` → galería cifrada con password `bollagas`; incorrecto → redirige a home sin mensaje
-- "Galería" añadida al nav principal (`base.njk`)
-- Estilos ALA en `styles.css`: grid, thumbnails, play-button overlay para vídeos, lightbox
-- Credenciales Dropbox en `.env` (ignorado por git), inyectadas en build via `dotenv`
-- Carpeta Dropbox: `/Almacen-archivo/2026-berlin` — existe y accesible ✓
-- Token con scopes correctos: `files.metadata.read`, `files.content.read`, `files.content.write`
-- Galería carga sin errores con carpeta vacía (muestra estado "vacío")
-
-## 🔲 Pendiente de probar
-
-- **Subida de fotos/vídeos** desde el botón "Subir" — no testado todavía
-  - Ficheros ≤150MB: upload directo
-  - Ficheros >150MB: upload session por chunks
-- Probar con fotos reales: miniaturas, orden por fecha EXIF, lightbox
-- Probar vídeos: thumbnail con play overlay, reproducción inline en lightbox
-- Build de producción (`npm run build`) y verificar que el cifrado funciona end-to-end
+  - `npm run build` → galería cifrada con password `bollagas`; incorrecto → redirige a home
+- Credenciales Dropbox en `.env` (ignorado por git) + GitHub Secrets para CI/CD
+- Carpeta Dropbox: `/Almacen-archivo/2026-berlin`
+- Subida con progreso real (XHR + spinner braille + mensajes técnicos por chunks)
+- Umbrales de chunk: 100 MB (producción), configurables en `src/_data/galeria.json`
+- Autorename propio antes de subir para evitar sobreescribir duplicados
+- Modo selección (pulsación larga) + descarga múltiple con progreso
+- Lightbox con poster inmediato en vídeos y preload agresivo
+- EXIF completo en doble tap sobre el caption: cámara, focal, apertura, ISO, flash, WB
+- Coordenadas GPS con etiqueta MAPS idéntica a las fichas (via exifr full CDN jsDelivr)
+- Nombre del archivo en el overlay EXIF
 
 ## Notas técnicas
 
-- `dotenv` v17 instalado como devDependency
+- `dotenv` v17 como devDependency
+- `exifr@7/dist/full.umd.js` desde jsDelivr (solo en galería)
 - Build script: `eleventy --input=src && node scripts/encrypt-galeria.mjs`
-- Serve script sin cifrado (sin cambios)
 - PBKDF2 250.000 iteraciones, AES-256-GCM
+- `src/_data/galeria.json`: `uploadChunkThreshold` y `uploadPartSize` en MB
