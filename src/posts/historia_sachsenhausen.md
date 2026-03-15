@@ -3,6 +3,7 @@ layout: post.njk
 title: "Sachsenhausen: campo modelo, campo doble (1936–1950)"
 excerpt: "De campo de entrenamiento de las SS a memorial: la historia de Sachsenhausen como laboratorio del terror nazi y, tras 1945, como campo soviético de internamiento."
 modulo: "Historia"
+hero: /images/sachsenhausen-800.webp
 alt: "Torre A del memorial de Sachsenhausen en Oranienburg"
 templateEngineOverride: njk,md
 permalink: /historia/historia_sachsenhausen/

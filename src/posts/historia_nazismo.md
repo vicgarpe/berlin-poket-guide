@@ -3,6 +3,7 @@ layout: post.njk
 title: "El nazismo: ascenso, régimen y colapso (1919–1945)"
 excerpt: "Cómo la crisis de Weimar, la humillación de Versalles y el colapso económico facilitaron el ascenso de Hitler y el establecimiento de un Estado totalitario racista."
 modulo: "Historia"
+hero: /images/nacismo-800.webp
 alt: "Berlín bajo el Tercer Reich"
 templateEngineOverride: njk,md
 permalink: /historia/historia_nazismo/

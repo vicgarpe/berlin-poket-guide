@@ -3,6 +3,7 @@ layout: post.njk
 title: "El Muro de Berlín (1961–1989)"
 excerpt: "De la división en cuatro zonas a la caída del Muro: cómo la Guerra Fría partió una ciudad y qué quedó de ello."
 modulo: "Historia"
+hero: /images/salto-soldado-800.webp
 alt: "Fragmento del Muro de Berlín con grafitis"
 templateEngineOverride: njk,md
 permalink: /historia/historia_muro/
