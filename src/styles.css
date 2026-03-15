@@ -360,6 +360,53 @@ a:hover{
 }
 .gallery-upload-btn:hover{ background: #9b3221; }
 
+/* Botones cancelar / descargar */
+.gallery-action-btn{
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: .82rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: .45rem .9rem;
+  border-radius: .45rem;
+  cursor: pointer;
+  border: none;
+  transition: background .13s, opacity .13s;
+  line-height: 1;
+}
+.gallery-cancel-btn{ background: #e8e1d9; color: var(--text); }
+.gallery-cancel-btn:hover{ background: #d5cdc4; }
+.gallery-download-btn{ background: #2a6e3f; color: #fff; }
+.gallery-download-btn:hover:not(:disabled){ background: #1f5430; }
+.gallery-download-btn:disabled{ opacity: .45; cursor: default; }
+
+/* Modo selección */
+.gallery-grid.selecting .gallery-item{ user-select: none; }
+.gallery-grid.selecting .gallery-item::after{
+  content: '';
+  position: absolute;
+  top: .4rem; right: .4rem;
+  width: 1.3rem; height: 1.3rem;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.9);
+  background: rgba(0,0,0,.25);
+  box-shadow: 0 1px 3px rgba(0,0,0,.4);
+  z-index: 3;
+}
+.gallery-grid.selecting .gallery-item--selected::after{
+  content: '✓';
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-size: .75rem;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3rem;
+}
+
 /* Columnas de miniaturas (layout D) */
 .gallery-grid{
   columns: 3;
