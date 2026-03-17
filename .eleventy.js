@@ -38,6 +38,9 @@ export default function(eleventyConfig) {
   // --- Dato global (año de build) para usar en plantillas ---
   eleventyConfig.addGlobalData("build", { year: new Date().getFullYear() });
 
+  // --- Token worker Mariano (desde .env / GitHub Secret) ---
+  eleventyConfig.addGlobalData("workerToken", process.env.WORKER_TOKEN || "");
+
   // --- Credenciales Dropbox (desde .env, solo se incrustan en galeria.njk) ---
   eleventyConfig.addGlobalData("dropbox", {
     appKey:       process.env.DROPBOX_APP_KEY       || "",
