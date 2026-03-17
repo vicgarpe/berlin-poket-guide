@@ -118,6 +118,9 @@ function buildShell(payloadJSON, iterations, redirect) {
 
   <script type="application/json" id="payload">${safePayload}</script>
   <script>
+    const _TK = 'bgp_gal';
+    const _TTL = 30 * 24 * 60 * 60 * 1000;
+
     function b64(s) { return Uint8Array.from(atob(s), c => c.charCodeAt(0)); }
 
     async function tryDecrypt(password) {
@@ -141,7 +144,9 @@ function buildShell(payloadJSON, iterations, redirect) {
       const btn = document.getElementById('btn');
       btn.disabled = true; btn.textContent = '…';
       try {
-        const html = await tryDecrypt(document.getElementById('pw').value.trim());
+        const pw = document.getElementById('pw').value.trim();
+        const html = await tryDecrypt(pw);
+        try { localStorage.setItem(_TK, JSON.stringify({ pw, exp: Date.now() + _TTL })); } catch {}
         document.open(); document.write(html); document.close();
       } catch {
         window.location.replace('${redirect}');
@@ -150,6 +155,24 @@ function buildShell(payloadJSON, iterations, redirect) {
 
     document.getElementById('btn').addEventListener('click', onSubmit);
     document.getElementById('pw').addEventListener('keydown', e => { if (e.key === 'Enter') onSubmit(); });
+
+    // Auto-login si hay token guardado
+    (async () => {
+      try {
+        const raw = localStorage.getItem(_TK);
+        if (!raw) return;
+        const { pw, exp } = JSON.parse(raw);
+        if (!pw || exp < Date.now()) { localStorage.removeItem(_TK); return; }
+        const card = document.querySelector('.card');
+        if (card) card.style.opacity = '0.4';
+        const html = await tryDecrypt(pw);
+        document.open(); document.write(html); document.close();
+      } catch {
+        localStorage.removeItem(_TK);
+        const card = document.querySelector('.card');
+        if (card) card.style.opacity = '1';
+      }
+    })();
   </script>
 </body>
 </html>`;
