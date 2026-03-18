@@ -9,6 +9,8 @@ alt: "Collage del memorial de Sachsenhausen con la Torre A y el obelisco"
 templateEngineOverride: njk,md
 ---
 
+{% timeline "2026-03-20" %}
+
 ## Qué ver
 - **Memorial y Museo de Sachsenhausen (Oranienburg)** — campo (1936–45) y memorial, con guía en **español** (Buendía).
 - **Tarde suave en Berlín (para todos):** paseo por **Museumsinsel / Nikolaiviertel**, cafés en **Mitte** o Hackescher Markt.

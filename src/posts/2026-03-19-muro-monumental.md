@@ -9,6 +9,8 @@ templateEngineOverride: njk,md
 permalink: /posts/{{ page.fileSlug }}/
 ---
 
+{% timeline "2026-03-19" %}
+
 ## Qué ver
 - **Free tour: Berlín Monumental (GuruWalk)** — recorrido guiado por el centro.
 - **East Side Gallery** — tramo de 1,3 km del antiguo Muro convertido en galería al aire libre.

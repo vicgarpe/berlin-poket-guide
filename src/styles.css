@@ -327,6 +327,142 @@ a:hover{
   margin-bottom: 0;
 }
 
+/* ═══════════════════════════════════════════════════════════
+   TIMELINE WIDGET — línea de tiempo de la agenda del día
+   ═══════════════════════════════════════════════════════════ */
+.timeline-widget{
+  margin: 0 0 1.6rem;
+  background: #faf6f4;
+  border: 1px solid #e0d4d0;
+  border-radius: 6px;
+  overflow: hidden;
+  font-family: 'Libre Franklin', sans-serif;
+}
+.tl-header{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .45rem .75rem .3rem;
+  border-bottom: 1px solid #e0d4d0;
+  font-size: .72rem;
+  font-weight: 700;
+  color: #7a3523;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.tl-header-time{
+  font-weight: 400;
+  color: #9b3221;
+  font-size: .75rem;
+}
+.tl-scroll{
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding: .5rem 0 0;
+}
+.tl-track{
+  position: relative;
+  /* height set by JS */
+}
+.tl-hour{
+  position: absolute;
+  top: 0;
+  width: 1px;
+  background: #e0d4d0;
+  /* bottom set by JS */
+}
+.tl-hour-label{
+  position: absolute;
+  left: 3px;
+  font-size: .62rem;
+  color: #b0908a;
+  white-space: nowrap;
+}
+
+/* Eventos con duración — dos estilos alternos */
+.tl-event{
+  position: absolute;
+  border-radius: 3px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 6px;
+  box-sizing: border-box;
+  transition: opacity .15s;
+}
+.tl-event.tl-solid{
+  background: #bb3825;
+}
+.tl-event.tl-outline{
+  background: #f5ece9;
+  border: 1.5px solid #bb3825;
+}
+.tl-event.tl-past{ opacity: .38; }
+.tl-event-label{
+  font-size: .62rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  pointer-events: none;
+}
+.tl-solid .tl-event-label{ color: #fff; }
+.tl-outline .tl-event-label{ color: #7a3523; }
+
+/* Hitos — marcas puntuales en el eje */
+.tl-tick{
+  position: absolute;
+  width: 0;
+  border-left: 1.5px dashed #9b3221;
+  z-index: 5;
+  box-sizing: border-box;
+}
+.tl-tick.tl-past{ opacity: .35; }
+.tl-tick-dot{
+  position: absolute;
+  top: 0;
+  left: -4px;
+  width: 7px;
+  height: 7px;
+  background: #9b3221;
+  border-radius: 50%;
+}
+.tl-tick-label{
+  position: absolute;
+  top: 2px;
+  left: 5px;
+  font-size: .59rem;
+  font-weight: 600;
+  color: #9b3221;
+  white-space: nowrap;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Línea de "ahora" */
+.tl-now{
+  position: absolute;
+  top: 0;
+  width: 2px;
+  background: #9b3221;
+  z-index: 10;
+  /* bottom set by JS */
+}
+.tl-now-label{
+  position: absolute;
+  top: 0;
+  left: 4px;
+  font-size: .65rem;
+  font-weight: 700;
+  color: #9b3221;
+  white-space: nowrap;
+  background: #faf6f4;
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
 /* TTS — frases alemanas pronunciables */
 .tts-link{
   color: inherit;

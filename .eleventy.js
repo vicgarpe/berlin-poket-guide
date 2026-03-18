@@ -82,6 +82,11 @@ export default function(eleventyConfig) {
   ${txt}</a>`;
   });
 
+  // --- Shortcode timeline: línea de tiempo del día (widgets de agenda) ---
+  eleventyConfig.addNunjucksShortcode("timeline", (date) => {
+    return `<div class="timeline-widget" data-date="${_escapeHtml(date || '')}"></div>`;
+  });
+
   // --- Shortcode wiki: [[slug]] enlaza entre fichas por nombre de fichero ---
   eleventyConfig.addNunjucksShortcode("wiki", (slug, label) => {
     slug = slug.replace(/\.md$/, "");

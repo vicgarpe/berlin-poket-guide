@@ -9,6 +9,8 @@ templateEngineOverride: njk,md
 permalink: /posts/{{ page.fileSlug }}/
 ---
 
+{% timeline "2026-03-21" %}
+
 ## Datos del vuelo (Berlín → Valencia)
 - **Salida:** Berlin Brandenburg (BER) — **dom. 22 mar. 06:00** · **Terminal 1**
 - **Llegada:** Valencia (VLC) — **dom. 22 mar. 09:05**
