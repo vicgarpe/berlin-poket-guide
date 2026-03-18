@@ -101,3 +101,18 @@ Acepta texto escrito o una foto directamente desde la cámara.
 | Erdgeschoss (EG) | Planta baja |
 | Aufzug | Ascensor |
 | Treppe | Escalera |
+
+### Números del 1 al 10
+
+| Número | Alemán | Pronunciación aprox. |
+|---|---|---|
+| 1 | Eins | áins |
+| 2 | Zwei | tsvái |
+| 3 | Drei | drái |
+| 4 | Vier | fír |
+| 5 | Fünf | fünf |
+| 6 | Sechs | sex |
+| 7 | Sieben | síben |
+| 8 | Acht | ajt |
+| 9 | Neun | nóin |
+| 10 | Zehn | tsen |
