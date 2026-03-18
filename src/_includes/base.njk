@@ -42,6 +42,197 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+  // Timeline widget — línea de tiempo horizontal con carriles Gantt
+  (function () {
+    var widget = document.querySelector('.timeline-widget');
+    if (!widget) return;
+
+    function toMin(s) { var p = s.split(':'); return +p[0] * 60 + +p[1]; }
+    function pad(n)   { return String(n).padStart(2, '0'); }
+
+    // --- Parsear timetable del DOM ---
+    var headings = Array.from(document.querySelectorAll('h2,h3'));
+    var tHead = headings.find(function(h){ return /timetable/i.test(h.textContent); });
+    if (!tHead) return;
+    var listEl = tHead.nextElementSibling;
+    while (listEl && listEl.tagName !== 'UL' && listEl.tagName !== 'OL') {
+      listEl = listEl.nextElementSibling;
+    }
+    if (!listEl) return;
+
+    var RE = /(\d{1,2}:\d{2})(?:\s*[–\-]\s*(\d{1,2}:\d{2}))?/;
+    var allEvents = [];
+    Array.from(listEl.querySelectorAll('li')).forEach(function(li) {
+      var text = li.textContent.trim();
+      var m = text.match(RE);
+      if (!m) return;
+      var start = toMin(m[1]);
+      var end   = m[2] ? toMin(m[2]) : null;
+      var label = text.slice(text.indexOf(m[0]) + m[0].length)
+        .replace(/^[\s—·\-]+/, '').replace(/\s*\(.*?\)\s*/g, '').trim();
+      if (!label) label = m[0];
+      allEvents.push({ start: start, end: end, label: label });
+    });
+    if (!allEvents.length) return;
+
+    // Separar hitos (puntuales) y eventos con duración
+    var rangeEvs = allEvents.filter(function(e){ return e.end !== null; });
+    var pointEvs = allEvents.filter(function(e){ return e.end === null; });
+
+    // --- Asignación de carriles Gantt para eventos con duración ---
+    // Carril mínimo disponible donde el evento no solapa con el anterior
+    var laneEnds = []; // tiempo de fin del último evento en cada carril
+    rangeEvs.forEach(function(ev) {
+      var placed = false;
+      for (var i = 0; i < laneEnds.length; i++) {
+        if (ev.start >= laneEnds[i] + 2) {
+          ev.lane = i;
+          laneEnds[i] = ev.end;
+          placed = true;
+          break;
+        }
+      }
+      if (!placed) {
+        ev.lane = laneEnds.length;
+        laneEnds.push(ev.end);
+      }
+    });
+    var numLanes = Math.max(laneEnds.length, 1);
+
+    // --- Dimensiones ---
+    var PX      = 3;   // px por minuto
+    var LANE_H  = 34;  // altura de cada carril en px
+    var LANE_G  = 5;   // gap entre carriles
+    var TICK_H  = 18;  // zona de hitos bajo los carriles
+    var AXIS_H  = 20;  // zona del eje de horas
+    var PAD_TOP = 6;
+    var trackH  = PAD_TOP + numLanes * (LANE_H + LANE_G) + TICK_H + AXIS_H;
+    var axisTop = trackH - AXIS_H; // posición Y del eje de horas
+
+    // --- Rango del eje X ---
+    var allStarts = allEvents.map(function(e){ return e.start; });
+    var allEnds   = allEvents.map(function(e){ return e.end || e.start; });
+    var now       = new Date();
+    var nowMin    = now.getHours() * 60 + now.getMinutes();
+    var today     = now.getFullYear() + '-' + pad(now.getMonth()+1) + '-' + pad(now.getDate());
+    var isToday   = (widget.dataset.date || '') === today;
+
+    var minT = Math.floor(Math.min.apply(null, allStarts) / 60) * 60;
+    var maxT = Math.ceil((Math.max.apply(null, allEnds) + 30) / 60) * 60;
+    if (isToday) {
+      minT = Math.min(minT, Math.floor(Math.max(0, nowMin - 45) / 60) * 60);
+      maxT = Math.max(maxT, Math.ceil((nowMin + 90) / 60) * 60);
+    }
+    var W = (maxT - minT) * PX;
+
+    // --- Cabecera ---
+    var header = document.createElement('div');
+    header.className = 'tl-header';
+    header.innerHTML = '<span>Itinerario del día</span>' +
+      (isToday
+        ? '<span class="tl-header-time">Ahora: ' + pad(now.getHours()) + ':' + pad(now.getMinutes()) + '</span>'
+        : '');
+    widget.appendChild(header);
+
+    // --- Scroll + track ---
+    var scroll = document.createElement('div');
+    scroll.className = 'tl-scroll';
+    var track = document.createElement('div');
+    track.className = 'tl-track';
+    track.style.width = W + 'px';
+    track.style.height = trackH + 'px';
+
+    // Eje de horas
+    for (var h = minT; h <= maxT; h += 60) {
+      var x = (h - minT) * PX;
+      var hourEl = document.createElement('div');
+      hourEl.className = 'tl-hour';
+      hourEl.style.left = x + 'px';
+      hourEl.style.top  = '0';
+      hourEl.style.bottom = AXIS_H + 'px';
+      var lbl = document.createElement('span');
+      lbl.className = 'tl-hour-label';
+      lbl.style.bottom = -(AXIS_H - 2) + 'px'; // debajo de la línea
+      lbl.textContent = pad(h / 60) + ':00';
+      hourEl.appendChild(lbl);
+      track.appendChild(hourEl);
+    }
+
+    // Eventos con duración (barras en carriles)
+    var barIndex = 0; // para alternar estilos
+    rangeEvs.forEach(function(ev) {
+      var isPast  = isToday && ev.end < nowMin;
+      var isSolid = (barIndex % 2 === 0);
+      barIndex++;
+      var x    = (ev.start - minT) * PX;
+      var w    = Math.max((ev.end - ev.start) * PX, 8);
+      var top  = PAD_TOP + ev.lane * (LANE_H + LANE_G);
+
+      var el = document.createElement('div');
+      el.className = 'tl-event ' + (isSolid ? 'tl-solid' : 'tl-outline') + (isPast ? ' tl-past' : '');
+      el.style.left   = x + 'px';
+      el.style.width  = w + 'px';
+      el.style.top    = top + 'px';
+      el.style.height = LANE_H + 'px';
+      el.title = ev.label;
+
+      var span = document.createElement('span');
+      span.className = 'tl-event-label';
+      span.textContent = ev.label;
+      el.appendChild(span);
+      track.appendChild(el);
+    });
+
+    // Hitos (marcas puntuales)
+    var tickZoneTop = PAD_TOP + numLanes * (LANE_H + LANE_G);
+    pointEvs.forEach(function(ev) {
+      var isPast = isToday && ev.start < nowMin;
+      var x = (ev.start - minT) * PX;
+
+      var tick = document.createElement('div');
+      tick.className = 'tl-tick' + (isPast ? ' tl-past' : '');
+      tick.style.left   = x + 'px';
+      tick.style.top    = tickZoneTop + 'px';
+      tick.style.height = (TICK_H - 2) + 'px';
+      tick.title = pad(Math.floor(ev.start/60)) + ':' + pad(ev.start%60) + ' — ' + ev.label;
+
+      var dot = document.createElement('span');
+      dot.className = 'tl-tick-dot';
+      tick.appendChild(dot);
+
+      var tlbl = document.createElement('span');
+      tlbl.className = 'tl-tick-label';
+      tlbl.textContent = pad(Math.floor(ev.start/60)) + ':' + pad(ev.start%60);
+      tick.appendChild(tlbl);
+
+      track.appendChild(tick);
+    });
+
+    // Línea de "ahora"
+    if (isToday && nowMin >= minT && nowMin <= maxT) {
+      var nowX = (nowMin - minT) * PX;
+      var nowLine = document.createElement('div');
+      nowLine.className = 'tl-now';
+      nowLine.style.left   = nowX + 'px';
+      nowLine.style.top    = '0';
+      nowLine.style.bottom = AXIS_H + 'px';
+      var nowLbl = document.createElement('span');
+      nowLbl.className = 'tl-now-label';
+      nowLbl.textContent = pad(now.getHours()) + ':' + pad(now.getMinutes());
+      nowLine.appendChild(nowLbl);
+      track.appendChild(nowLine);
+    }
+
+    scroll.appendChild(track);
+    widget.appendChild(scroll);
+
+    // Auto-scroll al momento actual (o al inicio de los eventos)
+    var target = isToday
+      ? (nowMin - minT) * PX - scroll.clientWidth / 3
+      : (allEvents[0].start - minT) * PX - 20;
+    scroll.scrollLeft = Math.max(0, target);
+  })();
+
   // TTS — hace clicables las columnas "Alemán" en tablas de recursos_idioma
   (function () {
     var ICON = '<span class="tts-icon" aria-hidden="true"><svg width="10" height="11" viewBox="0 0 10 11" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 10,5.5 0,11"/></svg></span>';
