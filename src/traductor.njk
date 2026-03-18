@@ -131,6 +131,10 @@ async function traducir() {
   } else {
     const file = document.getElementById('input-imagen').files[0];
     if (!file) { mostrarError('Selecciona una foto antes de traducir.'); return; }
+    if (!['image/jpeg', 'image/jpg'].includes(file.type)) {
+      mostrarError(`La foto debe ser JPEG (la tuya es "${file.type || 'desconocido'}"). En iOS prueba con la cámara directamente.`);
+      return;
+    }
     fd.append('image', file);
   }
   if (contexto) fd.append('context', contexto);
@@ -148,6 +152,7 @@ async function traducir() {
     if (!r.ok || !data.success) throw new Error(data.error || 'Error en el worker (' + r.status + ')');
     mostrarResultado(data.result);
   } catch (err) {
+    console.error('[Mariano]', err);
     mostrarError(err.message || 'Error de red. Comprueba la conexión.');
   } finally {
     btn.disabled = false;
