@@ -41,5 +41,40 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+  // TTS — hace clicables las columnas "Alemán" en tablas de recursos_idioma
+  (function () {
+    var ICON = '<span class="tts-icon" aria-hidden="true"><svg width="10" height="11" viewBox="0 0 10 11" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 10,5.5 0,11"/></svg></span>';
+
+    document.querySelectorAll('table').forEach(function (table) {
+      var headers = Array.from(table.querySelectorAll('thead th, tr:first-child th'));
+      var idx = headers.findIndex(function (th) { return th.textContent.trim() === 'Alemán'; });
+      if (idx === -1) return;
+      table.querySelectorAll('tbody tr').forEach(function (row) {
+        var td = row.querySelectorAll('td')[idx];
+        if (!td) return;
+        var text = td.textContent.trim();
+        td.innerHTML = '<a href="#" class="tts-link" data-tts="' +
+          text.replace(/&/g,'&amp;').replace(/"/g,'&quot;') +
+          '">' + ICON + ' ' + td.innerHTML + '</a>';
+      });
+    });
+
+    document.addEventListener('click', function (e) {
+      var el = e.target.closest('[data-tts]');
+      if (!el) return;
+      e.preventDefault();
+      if (!window.speechSynthesis) return;
+      window.speechSynthesis.cancel();
+      var utt = new SpeechSynthesisUtterance(el.dataset.tts);
+      utt.lang = 'de-DE';
+      utt.rate = 0.9;
+      el.classList.add('tts-playing');
+      utt.onend = function () { el.classList.remove('tts-playing'); };
+      utt.onerror = function () { el.classList.remove('tts-playing'); };
+      window.speechSynthesis.speak(utt);
+    });
+  })();
+  </script>
 </body>
 </html>
