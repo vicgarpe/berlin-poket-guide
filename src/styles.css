@@ -942,9 +942,10 @@ a:hover{
   padding: .7rem 1rem;
   width: 100%;
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: 16px;
   margin-bottom: .75rem;
   display: block;
+  touch-action: manipulation;
 }
 .fin-pwd-input:focus{ outline: none; border-color: var(--accent); }
 .fin-pwd-btn{ width: 100%; justify-content: center; }
