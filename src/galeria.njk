@@ -16,6 +16,12 @@ permalink: /galeria/index.html
       </svg>
       Bajar<span id="dl-count"></span>
     </button>
+    <button class="gallery-action-btn gallery-share-btn d-none" id="gallery-share-btn" disabled>
+      <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.504l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5z"/>
+      </svg>
+      Compartir<span id="sh-count"></span>
+    </button>
     <label class="gallery-upload-btn d-none" id="gallery-upload-label" for="upload-input">
       <svg width="15" height="15" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -556,6 +562,7 @@ function enterSelectMode(idx) {
   document.getElementById('select-all-bar').classList.remove('d-none');
   document.getElementById('gallery-cancel-btn').classList.remove('d-none');
   document.getElementById('gallery-download-btn').classList.remove('d-none');
+  if (canShare) document.getElementById('gallery-share-btn').classList.remove('d-none');
   document.getElementById('gallery-upload-label').classList.add('d-none');
   updateSelectUI();
 }
@@ -572,6 +579,9 @@ function exitSelectMode() {
   const dlBtn = document.getElementById('gallery-download-btn');
   dlBtn.classList.add('d-none');
   dlBtn.disabled = true;
+  const shBtn = document.getElementById('gallery-share-btn');
+  shBtn.classList.add('d-none');
+  shBtn.disabled = true;
   document.getElementById('gallery-upload-label').classList.remove('d-none');
 }
 
@@ -586,9 +596,13 @@ function updateSelectUI() {
     el.classList.toggle('gallery-item--selected', selectedFiles.has(parseInt(el.dataset.idx)));
   });
   document.getElementById('select-all-check').checked = selectedFiles.size === allFiles.length;
+  const n = selectedFiles.size;
   const dlBtn = document.getElementById('gallery-download-btn');
-  dlBtn.disabled = selectedFiles.size === 0;
-  document.getElementById('dl-count').textContent = selectedFiles.size > 0 ? ` (${selectedFiles.size})` : '';
+  dlBtn.disabled = n === 0;
+  document.getElementById('dl-count').textContent = n > 0 ? ` (${n})` : '';
+  const shBtn = document.getElementById('gallery-share-btn');
+  shBtn.disabled = n === 0;
+  document.getElementById('sh-count').textContent = n > 0 ? ` (${n})` : '';
 }
 
 document.querySelectorAll('.gallery-grp-btn').forEach(btn => {
@@ -608,11 +622,55 @@ document.querySelectorAll('.gallery-grp-btn').forEach(btn => {
   });
 });
 
+// Web Share API con ficheros (iOS Safari 15+, Android Chrome 89+)
+const canShare = !!(navigator.canShare && navigator.canShare({ files: [new File([], 'test.jpg', { type: 'image/jpeg' })] }));
+
 document.getElementById('gallery-cancel-btn').addEventListener('click', exitSelectMode);
 document.getElementById('select-all-check').addEventListener('change', e => {
   if (e.target.checked) allFiles.forEach((_, i) => selectedFiles.add(i));
   else selectedFiles.clear();
   updateSelectUI();
+});
+
+document.getElementById('gallery-share-btn').addEventListener('click', async () => {
+  const indices = [...selectedFiles].sort((a, b) => a - b);
+  const files   = indices.map(i => allFiles[i]);
+  const progress = document.getElementById('upload-progress');
+  const bar      = document.getElementById('upload-bar');
+  const label    = document.getElementById('upload-label');
+  progress.classList.remove('d-none');
+  bar.style.width = '0%';
+  spinStart(label, `Preparando ${files.length} archivo${files.length > 1 ? 's' : ''} para compartir…`);
+
+  const shareFiles = [];
+  for (let i = 0; i < files.length; i++) {
+    const file = files[i];
+    const base = Math.round(100 * i / files.length);
+    spinText(`${file.name} — obteniendo enlace…`);
+    try {
+      const link = await getTempLink(file.path_lower);
+      const r = await fetch(link);
+      bar.style.width = `${base + Math.round(100 / files.length)}%`;
+      const blob = await r.blob();
+      const mime = isVideo(file) ? (blob.type || 'video/mp4') : (blob.type || 'image/jpeg');
+      shareFiles.push(new File([blob], file.name, { type: mime }));
+      spinText(`${file.name} — listo`);
+    } catch (err) {
+      spinStop();
+      progress.classList.add('d-none');
+      alert(`Error al preparar ${file.name}: ${err.message}`);
+      return;
+    }
+  }
+
+  spinStop();
+  progress.classList.add('d-none');
+
+  try {
+    await navigator.share({ files: shareFiles });
+  } catch (err) {
+    if (err.name !== 'AbortError') alert(`No se pudo compartir: ${err.message}`);
+  }
 });
 
 document.getElementById('gallery-download-btn').addEventListener('click', async () => {
