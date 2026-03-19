@@ -4,6 +4,7 @@ title: "Galería — Guía de Berlín"
 permalink: /galeria/index.html
 ---
 
+{% gate %}
 <div class="d-flex align-items-center justify-content-between mb-3">
   <h2 class="module-title mb-0">Galería</h2>
   <div class="d-flex gap-2 align-items-center">
@@ -65,6 +66,8 @@ permalink: /galeria/index.html
   </div>
 </div>
 
+{% endgate %}
+
 <script src="https://cdn.jsdelivr.net/npm/exifr@7/dist/full.umd.js"></script>
 <script>
 const DROPBOX = {
@@ -86,7 +89,8 @@ let isSelectMode = false;
 let selectedFiles = new Set();
 let wasLongPress = false;
 
-document.addEventListener('DOMContentLoaded', initGallery);
+document.addEventListener('viaje:authed',   initGallery);
+document.addEventListener('viaje:unlocked', initGallery);
 
 // ─── Init ───────────────────────────────────────────────────────────────────
 
