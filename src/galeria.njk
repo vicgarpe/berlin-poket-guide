@@ -34,6 +34,12 @@ permalink: /galeria/index.html
   <p id="upload-label" class="small text-muted mt-1 mb-0"></p>
 </div>
 
+<div id="group-selector" class="gallery-grp-sel mb-3 d-none">
+  <button class="gallery-grp-btn active" data-group="day">Día</button>
+  <button class="gallery-grp-btn" data-group="camera">Cámara</button>
+  <button class="gallery-grp-btn" data-group="type">Tipo</button>
+</div>
+
 <div id="select-all-bar" class="d-none mb-2" style="font-family:var(--font-sans);font-size:.85rem;">
   <label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;color:var(--muted)">
     <input type="checkbox" id="select-all-check" style="accent-color:var(--accent);width:1rem;height:1rem;">
@@ -88,6 +94,8 @@ let currentIdx = 0;
 let isSelectMode = false;
 let selectedFiles = new Set();
 let wasLongPress = false;
+let currentGroupBy = 'day';
+let cameraCache = null; // null = no cargado, Map = ya leído
 
 document.addEventListener('viaje:authed',   initGallery);
 document.addEventListener('viaje:unlocked', initGallery);
@@ -167,6 +175,73 @@ function sortByDate(files) {
   });
 }
 
+function getGroupKey(file, groupBy) {
+  if (groupBy === 'day') {
+    const raw = file.media_info?.metadata?.time_taken || file.client_modified || '';
+    return raw ? raw.slice(0, 10) : '';
+  }
+  if (groupBy === 'camera') {
+    return cameraCache?.get(file.path_lower) || '';
+  }
+  if (groupBy === 'type') return isVideo(file) ? 'video' : 'photo';
+  return '';
+}
+
+async function buildCameraCache() {
+  cameraCache = new Map();
+  const photos = allFiles.filter(f => !isVideo(f));
+  const BATCH = 8;
+  for (let i = 0; i < photos.length; i += BATCH) {
+    await Promise.all(photos.slice(i, i + BATCH).map(async file => {
+      // Intentar con metadatos Dropbox primero (cuando están disponibles)
+      const make  = file.media_info?.metadata?.camera_make  || '';
+      const model = file.media_info?.metadata?.camera_model || '';
+      if (make || model) {
+        cameraCache.set(file.path_lower, [make, model].filter(Boolean).join(' '));
+        return;
+      }
+      // Fallback: leer EXIF del fichero (primeros 64 KB)
+      try {
+        const link = await getTempLink(file.path_lower);
+        const r = await fetch(link, { headers: { Range: 'bytes=0-65535' } });
+        const buf = await r.arrayBuffer();
+        const exif = await exifr.parse(buf);
+        const cam = [exif?.Make, exif?.Model].filter(Boolean).join(' ');
+        if (cam) cameraCache.set(file.path_lower, cam);
+      } catch { /* sin EXIF */ }
+    }));
+  }
+}
+
+function formatGroupLabel(key, groupBy) {
+  if (groupBy === 'day') {
+    if (!key) return 'Sin fecha';
+    const d = new Date(key + 'T12:00:00');
+    return d.toLocaleDateString('es-ES', { weekday: 'long', day: '2-digit', month: 'short', year: 'numeric' });
+  }
+  if (groupBy === 'camera') return key || 'Sin cámara';
+  if (groupBy === 'type')   return key === 'video' ? 'Vídeos' : 'Fotos';
+  return key;
+}
+
+function groupFiles(files, groupBy) {
+  const map = new Map();
+  files.forEach((file, idx) => {
+    const key = getGroupKey(file, groupBy);
+    if (!map.has(key)) map.set(key, []);
+    map.get(key).push({ file, idx });
+  });
+  const entries = [...map.entries()];
+  if (groupBy === 'day') {
+    entries.sort((a, b) => (a[0] || 'zzz').localeCompare(b[0] || 'zzz'));
+  } else if (groupBy === 'camera') {
+    entries.sort((a, b) => { if (!a[0]) return 1; if (!b[0]) return -1; return a[0].localeCompare(b[0]); });
+  } else if (groupBy === 'type') {
+    entries.sort((a, b) => a[0] === 'photo' ? -1 : 1);
+  }
+  return entries.map(([key, items]) => ({ label: formatGroupLabel(key, groupBy), items }));
+}
+
 async function batchThumbs(files) {
   const map = {};
   for (let i = 0; i < files.length; i += 25) {
@@ -217,65 +292,71 @@ async function getLargeThumb(path) {
 
 // ─── Render grid ─────────────────────────────────────────────────────────────
 
+function makeItem(file, idx, thumbs) {
+  const thumb = thumbs[file.path_lower];
+  const video = isVideo(file);
+  const item = document.createElement('div');
+  item.className = 'gallery-item' + (video ? ' gallery-item--video' : '');
+  item.dataset.idx = idx;
+
+  if (thumb) {
+    const img = document.createElement('img');
+    img.src = thumb;
+    img.alt = file.name;
+    img.loading = 'lazy';
+    item.appendChild(img);
+  } else {
+    item.classList.add('gallery-item--nothumb');
+    item.dataset.name = file.name;
+  }
+
+  if (video) {
+    const play = document.createElement('div');
+    play.className = 'play-btn';
+    play.setAttribute('aria-hidden', 'true');
+    play.innerHTML = `<svg viewBox="0 0 24 24" fill="white" width="44" height="44">
+      <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/>
+      <path d="M10 8l6 4-6 4V8z"/>
+    </svg>`;
+    item.appendChild(play);
+  }
+
+  let lpTimer = null;
+  const lpStart = () => {
+    lpTimer = setTimeout(() => { lpTimer = null; wasLongPress = true; enterSelectMode(idx); }, 500);
+  };
+  const lpCancel = () => { clearTimeout(lpTimer); lpTimer = null; };
+  item.addEventListener('touchstart', lpStart, { passive: true });
+  item.addEventListener('touchend',   lpCancel);
+  item.addEventListener('touchmove',  lpCancel);
+  item.addEventListener('mousedown',  lpStart);
+  item.addEventListener('mouseup',    lpCancel);
+  item.addEventListener('mouseleave', lpCancel);
+  item.addEventListener('contextmenu', e => e.preventDefault());
+  item.addEventListener('click', () => {
+    if (wasLongPress) { wasLongPress = false; return; }
+    if (isSelectMode) { toggleSelect(idx); return; }
+    openLightbox(idx);
+  });
+  return item;
+}
+
 function renderGrid(files, thumbs) {
   setStatus('hide');
   const grid = document.getElementById('gallery-grid');
   grid.innerHTML = '';
 
-  files.forEach((file, idx) => {
-    const thumb = thumbs[file.path_lower];
-    const video = isVideo(file);
-    const item = document.createElement('div');
-    item.className = 'gallery-item' + (video ? ' gallery-item--video' : '');
-    item.dataset.idx = idx;
-
-    if (thumb) {
-      const img = document.createElement('img');
-      img.src = thumb;
-      img.alt = file.name;
-      img.loading = 'lazy';
-      item.appendChild(img);
-    } else {
-      item.classList.add('gallery-item--nothumb');
-      item.dataset.name = file.name;
-    }
-
-    if (video) {
-      const play = document.createElement('div');
-      play.className = 'play-btn';
-      play.setAttribute('aria-hidden', 'true');
-      play.innerHTML = `<svg viewBox="0 0 24 24" fill="white" width="44" height="44">
-        <circle cx="12" cy="12" r="12" fill="rgba(0,0,0,0.45)"/>
-        <path d="M10 8l6 4-6 4V8z"/>
-      </svg>`;
-      item.appendChild(play);
-    }
-
-    // Long press para entrar en modo selección
-    let lpTimer = null;
-    const lpStart = () => {
-      lpTimer = setTimeout(() => { lpTimer = null; wasLongPress = true; enterSelectMode(idx); }, 500);
-    };
-    const lpCancel = () => { clearTimeout(lpTimer); lpTimer = null; };
-    item.addEventListener('touchstart', lpStart, { passive: true });
-    item.addEventListener('touchend',   lpCancel);
-    item.addEventListener('touchmove',  lpCancel);
-    item.addEventListener('mousedown',  lpStart);
-    item.addEventListener('mouseup',    lpCancel);
-    item.addEventListener('mouseleave', lpCancel);
-    item.addEventListener('contextmenu', e => e.preventDefault());
-
-    item.addEventListener('click', () => {
-      if (wasLongPress) { wasLongPress = false; return; }
-      if (isSelectMode) { toggleSelect(idx); return; }
-      openLightbox(idx);
-    });
-
-    grid.appendChild(item);
+  groupFiles(files, currentGroupBy).forEach(group => {
+    const header = document.createElement('div');
+    header.className = 'gallery-group-header';
+    header.textContent = group.label;
+    grid.appendChild(header);
+    group.items.forEach(({ file, idx }) => grid.appendChild(makeItem(file, idx, thumbs)));
   });
 
   grid.classList.remove('d-none');
   document.getElementById('gallery-upload-label').classList.remove('d-none');
+  document.getElementById('group-selector').classList.remove('d-none');
 }
 
 // ─── Lightbox ────────────────────────────────────────────────────────────────
@@ -471,6 +552,7 @@ function enterSelectMode(idx) {
   isSelectMode = true;
   selectedFiles = new Set([idx]);
   document.getElementById('gallery-grid').classList.add('selecting');
+  document.getElementById('group-selector').classList.add('d-none');
   document.getElementById('select-all-bar').classList.remove('d-none');
   document.getElementById('gallery-cancel-btn').classList.remove('d-none');
   document.getElementById('gallery-download-btn').classList.remove('d-none');
@@ -482,6 +564,7 @@ function exitSelectMode() {
   isSelectMode = false;
   selectedFiles.clear();
   document.getElementById('gallery-grid').classList.remove('selecting');
+  document.getElementById('group-selector').classList.remove('d-none');
   document.getElementById('select-all-bar').classList.add('d-none');
   document.getElementById('select-all-check').checked = false;
   document.querySelectorAll('.gallery-item--selected').forEach(el => el.classList.remove('gallery-item--selected'));
@@ -507,6 +590,23 @@ function updateSelectUI() {
   dlBtn.disabled = selectedFiles.size === 0;
   document.getElementById('dl-count').textContent = selectedFiles.size > 0 ? ` (${selectedFiles.size})` : '';
 }
+
+document.querySelectorAll('.gallery-grp-btn').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    if (btn.dataset.group === currentGroupBy) return;
+    currentGroupBy = btn.dataset.group;
+    document.querySelectorAll('.gallery-grp-btn').forEach(b => b.classList.toggle('active', b === btn));
+    if (allFiles.length === 0) return;
+    if (currentGroupBy === 'camera' && !cameraCache) {
+      document.getElementById('gallery-grid').classList.add('d-none');
+      document.getElementById('group-selector').classList.add('d-none');
+      document.querySelector('#gallery-status p').textContent = 'Leyendo datos de cámara…';
+      setStatus('show');
+      await buildCameraCache();
+    }
+    renderGrid(allFiles, allThumbs);
+  });
+});
 
 document.getElementById('gallery-cancel-btn').addEventListener('click', exitSelectMode);
 document.getElementById('select-all-check').addEventListener('change', e => {
@@ -627,8 +727,8 @@ document.getElementById('upload-input').addEventListener('change', async e => {
     token = await getAccessToken();
     const newFiles = await listFolder();
     allFiles = sortByDate(newFiles.filter(isMedia));
-    const thumbs = await batchThumbs(allFiles);
-    renderGrid(allFiles, thumbs);
+    allThumbs = await batchThumbs(allFiles);
+    renderGrid(allFiles, allThumbs);
   }, 1200);
 });
 

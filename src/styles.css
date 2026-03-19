@@ -622,6 +622,47 @@ a:hover{
   border-radius: .45rem;
 }
 .gallery-item:hover{ transform: scale(1.02); filter: brightness(1.07); }
+
+/* Selector de agrupación */
+.gallery-grp-sel{
+  display: flex;
+  gap: .35rem;
+}
+.gallery-grp-btn{
+  font-family: var(--font-sans);
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  padding: .3rem .75rem;
+  border: 1px solid var(--rule);
+  border-radius: .35rem;
+  background: none;
+  color: var(--muted);
+  cursor: pointer;
+  transition: background .12s, color .12s, border-color .12s;
+}
+.gallery-grp-btn.active{
+  background: var(--accent);
+  color: #fff;
+  border-color: var(--accent);
+}
+.gallery-grp-btn:hover:not(.active){ background: #f0ebe4; color: var(--text); }
+
+/* Cabeceras de grupo en el grid masonry */
+.gallery-group-header{
+  column-span: all;
+  font-family: var(--font-sans);
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--muted);
+  padding: .75rem 0 .3rem;
+  border-bottom: 1px solid var(--rule);
+  margin-bottom: .1rem;
+}
+.gallery-group-header:first-child{ padding-top: 0; }
 .gallery-item:active{ transform: scale(.98); }
 
 /* Placeholder para ficheros sin thumbnail */
