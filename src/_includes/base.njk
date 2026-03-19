@@ -42,6 +42,54 @@
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
+  // ── Auth gate unificado ───────────────────────────────────────
+  (function () {
+    var COOKIE = 'viaje_ok';
+    var PWD    = 'bollagas';
+
+    function getCookie(n) {
+      return (document.cookie.split(';').map(function(c){ return c.trim(); })
+        .find(function(c){ return c.startsWith(n + '='); }) || '').split('=')[1] || '';
+    }
+    function setCookie(n, v, days) {
+      var d = new Date();
+      d.setTime(d.getTime() + days * 864e5);
+      document.cookie = n + '=' + v + ';expires=' + d.toUTCString() + ';path=/;SameSite=Lax';
+    }
+    function revealGate(wrap) {
+      wrap.querySelector('[data-gate-screen]').classList.add('d-none');
+      wrap.querySelector('[data-gate-content]').classList.remove('d-none');
+    }
+
+    window.viajeAuth = {
+      check: function (el) {
+        var screen = el.closest('[data-gate-screen]') || el.closest('[data-gate]').querySelector('[data-gate-screen]');
+        var input  = screen.querySelector('.viaje-gate-input');
+        if (input.value === PWD) {
+          setCookie(COOKIE, '1', 30);
+          document.querySelectorAll('[data-gate]').forEach(revealGate);
+          document.dispatchEvent(new CustomEvent('viaje:unlocked'));
+        } else {
+          input.classList.add('gate-shake');
+          setTimeout(function () {
+            input.classList.remove('gate-shake');
+            input.value = '';
+            input.focus();
+          }, 500);
+        }
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var gates = document.querySelectorAll('[data-gate]');
+      if (!gates.length) return;
+      if (getCookie(COOKIE) === '1') {
+        gates.forEach(revealGate);
+        document.dispatchEvent(new CustomEvent('viaje:authed'));
+      }
+    });
+  })();
+
   // Timeline widget — línea de tiempo horizontal con carriles Gantt
   (function () {
     var widget = document.querySelector('.timeline-widget');
