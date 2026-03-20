@@ -622,8 +622,12 @@ document.querySelectorAll('.gallery-grp-btn').forEach(btn => {
   });
 });
 
-// Web Share API con ficheros (iOS Safari 15+, Android Chrome 89+)
-const canShare = !!(navigator.canShare && navigator.canShare({ files: [new File([], 'test.jpg', { type: 'image/jpeg' })] }));
+// Web Share API con ficheros (iOS Safari 15+, Android Chrome/Firefox 89+)
+// Firefox Android soporta navigator.share pero no implementa navigator.canShare → lo tratamos como compatible
+const canShare = !!(navigator.share && (
+  typeof navigator.canShare !== 'function' ||
+  navigator.canShare({ files: [new File([], 'test.jpg', { type: 'image/jpeg' })] })
+));
 
 document.getElementById('gallery-cancel-btn').addEventListener('click', exitSelectMode);
 document.getElementById('select-all-check').addEventListener('change', e => {
