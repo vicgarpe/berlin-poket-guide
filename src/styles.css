@@ -554,18 +554,18 @@ a:hover{
 .gallery-action-btn{
   display: inline-flex;
   align-items: center;
-  gap: .4rem;
+  gap: .3rem;
   font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: .82rem;
+  font-weight: 800;
+  font-size: .75rem;
   letter-spacing: .04em;
   text-transform: uppercase;
-  padding: .45rem .9rem;
-  border-radius: .45rem;
+  padding: .18rem .5rem;
+  border-radius: 4px;
   cursor: pointer;
   border: none;
   transition: background .13s, opacity .13s;
-  line-height: 1;
+  line-height: 1.2;
 }
 .gallery-cancel-btn{ background: #e8e1d9; color: var(--text); }
 .gallery-cancel-btn:hover{ background: #d5cdc4; }
